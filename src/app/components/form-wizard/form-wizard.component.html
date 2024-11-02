@@ -1,6 +1,6 @@
 <section class="example-container">
   <header>
-    <h2>Step {{ selectedIndex + 1 }}/{{ steps.length }}</h2>
+    <h2>{{"step" | translate}} {{ selectedIndex + 1 }}/{{ steps.length }}</h2>
   </header>
 
   <div [ngTemplateOutlet]="selected ? selected.content : null"></div>
