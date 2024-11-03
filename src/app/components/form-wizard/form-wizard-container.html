@@ -1,8 +1,98 @@
-<form-wizard>
-  <cdk-step>
-    <p>Congrats, this is your first content</p>
+<form-wizard (messageEvent)="receiveMessage($event)" linear>
+  <cdk-step [stepControl]="form">
+
+    <div>
+      <div>
+        <h1>Combien d'équipes dans votre groupe ?</h1>
+      </div>
+
+      <div>
+        <form [formGroup]="form" class="custom-form" (ngSubmit)="submitForm()">
+          <input type="number" autofocus formControlName="nbTeams" placeholder="Enter the number of teams" required>
+
+          <div *ngIf="form.value.nbTeams > 1">
+            <input autofocus [required]="form.value.nbTeams > 1" type="text" formControlName="groupName"
+                   placeholder="Enter the name of the group">
+          </div>
+
+          <button cdkStepperNext [disabled]="form.invalid">
+            Valider
+          </button>
+        </form>
+      </div>
+    </div>
   </cdk-step>
   <cdk-step>
-    <p>Congrats, this is your second content</p>
+    <div>
+      <div>
+        <h1>Choississez votre mode de jeu</h1>
+      </div>
+
+      <div>
+        <form [formGroup]="gameModeForm" class="custom-form" (ngSubmit)="submitGameModeForm()">
+          <select formControlName="gamemode" autofocus required>
+            <option value="Classique">Classique</option>
+            <option value="Halloween">Halloween</option>
+          </select>
+          <button cdkStepperNext [disabled]="gameModeForm.invalid">
+            Valider
+          </button>
+        </form>
+      </div>
+    </div>
+  </cdk-step>
+
+  <div *ngFor="let team of teams; index as i">
+    <cdk-step>
+      <div>
+        <div>
+          <h1>Composez votre équipe{{i+1}} {{ team.name }}</h1>
+        </div>
+
+        <div>
+          <form [formGroup]="teamDetailsForm" class="custom-form" (ngSubmit)="submitTeamDetailsForm(team.id)">
+            <input type="text" autofocus formControlName="teamName" placeholder="Enter the name of the team" required>
+
+            <button cdkStepperNext [disabled]="form.invalid">
+              Valider
+            </button>
+          </form>
+        </div>
+      </div>
+    </cdk-step>
+    <cdk-step>
+      <div>
+        <div>
+          <h1>{{ team.name }} SCAN</h1>
+          <p>Veuillez poser votre badge contre l'écran</p>
+        </div>
+
+        <div class="pulse">
+          <span style="--i:0;"></span>
+          <span style="--i:1;"></span>
+          <span style="--i:2;"></span>
+          <span style="--i:3;"></span>
+          <p class="pulse-text">Click to continue</p>
+        </div>
+
+        <div>
+          <button cdkStepperNext>
+            Valider = popup puis next team or final
+          </button>
+        </div>
+      </div>
+    </cdk-step>
+  </div>
+
+  <cdk-step *ngIf="allTeamAreCompleted()">
+    <div>
+      <div>
+        <h1>Final screen</h1>
+      </div>
+
+      <div>
+        <p>Toutes les équipes sont prêtes, allez voir votre game master</p>
+      </div>
+    </div>
   </cdk-step>
 </form-wizard>

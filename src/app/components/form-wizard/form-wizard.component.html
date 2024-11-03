@@ -1,6 +1,20 @@
-<section class="example-container">
+<section class="container">
   <header>
-    <h2>{{"step" | translate}} {{ selectedIndex + 1 }}/{{ steps.length }}</h2>
+    <div>
+      <button cdkStepperPrevious class="back-btn">
+        &larr;
+      </button>
+    </div>
+
+    <div class="logo">
+      <img src="/assets/images/logo.svg" alt="logo">
+    </div>
+
+    <div>
+      <button *ngIf="selectedIndex > 0" (click)="sendMessage()" cdkStepperNext class="next-btn">
+        &rarr;
+      </button>
+    </div>
   </header>
 
   <div [ngTemplateOutlet]="selected ? selected.content : null"></div>
@@ -11,7 +25,8 @@
       <button
         class="example-step"
         [class.example-active]="selectedIndex === i"
-        (click)="selectStepByIndex(i)">Step {{ i + 1 }}</button>
+        (click)="selectStepByIndex(i)">Step {{ i + 1 }}
+      </button>
     }
     <button class="example-nav-button" cdkStepperNext>&rarr;</button>
   </footer>
