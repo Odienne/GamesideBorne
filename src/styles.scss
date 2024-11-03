@@ -49,3 +49,27 @@
     transform: scale(2);
   }
 }
+
+:root {
+  --tk-color-text: #ffffff !important;
+  --tk-background: none !important;
+  --tk-background-button: rgba(255, 255, 255, 0.2) !important;
+  --tk-background-button-fn: rgba(255, 255, 255, 0.2) !important;
+  --tk-background-button-active: rgba(255, 255, 255, 0.6) !important;
+}
+
+.touch-keyboard {
+  padding: 2rem 3rem;
+  background-image: linear-gradient(to right, #ff9966, #ff5e62);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5.5px);
+  -webkit-backdrop-filter: blur(5.5px);
+}
+
+.touch-keyboard-key {
+  box-shadow: 0 0 20px rgba(255, 163, 44, 0.2) !important;
+  backdrop-filter: blur(5.5px) !important;
+  -webkit-backdrop-filter: blur(5.5px) !important;
+}
+

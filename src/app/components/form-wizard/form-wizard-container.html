@@ -8,11 +8,19 @@
 
       <div>
         <form [formGroup]="form" class="custom-form" (ngSubmit)="submitForm()">
-          <input type="number" autofocus formControlName="nbTeams" placeholder="Enter the number of teams" required>
+          <input type="number"
+                 formControlName="nbTeams" placeholder="Enter the number of teams" required min="1">
 
           <div *ngIf="form.value.nbTeams > 1">
             <input autofocus [required]="form.value.nbTeams > 1" type="text" formControlName="groupName"
-                   placeholder="Enter the name of the group">
+                   placeholder="Enter the name of the group"
+                   ngxTouchKeyboard
+                   ngxTouchKeyboardFullScreen
+                   inputmode='text'
+                   #touchKeyboard="ngxTouchKeyboard"
+                   (focus)="touchKeyboard.openPanel()"
+                   (blur)="touchKeyboard.closePanel()"
+            >
           </div>
 
           <button cdkStepperNext [disabled]="form.invalid">
@@ -46,7 +54,7 @@
     <cdk-step>
       <div>
         <div>
-          <h1>Composez votre équipe{{i+1}} {{ team.name }}</h1>
+          <h1>Composez votre équipe{{ i + 1 }} {{ team.name }}</h1>
         </div>
 
         <div>

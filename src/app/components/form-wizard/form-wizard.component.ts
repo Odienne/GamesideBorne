@@ -4,16 +4,19 @@ import {NgForOf, NgIf, NgTemplateOutlet} from '@angular/common';
 import {TranslateModule} from "@ngx-translate/core";
 import {HeaderComponent} from "../header/header.component";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {NgxTouchKeyboardModule }  from 'ngx-touch-keyboard';
+
 
 @Component({
   selector: 'form-wizard-container',
   templateUrl: './form-wizard-container.html',
   styleUrl: './form-wizard-container.css',
   standalone: true,
-  imports: [forwardRef(() => FormWizard), CdkStepperModule, ReactiveFormsModule, NgIf, HeaderComponent, NgForOf],
+  imports: [forwardRef(() => FormWizard), CdkStepperModule, ReactiveFormsModule, NgIf, HeaderComponent, NgForOf, NgxTouchKeyboardModule],
 })
 export class FormWizardContainer {
 
+  currentLocale = localStorage.getItem("lang");
 
   form!: FormGroup;
   gameModeForm!: FormGroup;
@@ -26,7 +29,7 @@ export class FormWizardContainer {
 
   ngOnInit() {
     this.form = this.fb.group({
-      nbTeams: [null, [Validators.required]],
+      nbTeams: [null, [Validators.required, Validators.min(1)]],
       groupName: ["", Validators.minLength(3)],
     })
     this.gameModeForm = this.fb.group({
