@@ -2,9 +2,10 @@ import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Output} from '@a
 import {CdkStepper, CdkStepperModule} from '@angular/cdk/stepper';
 import {NgForOf, NgIf, NgTemplateOutlet} from '@angular/common';
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import {HeaderComponent} from "../header/header.component";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
+import {NgxTouchKeyboardDirective, NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
+import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
+import {MatStep, MatStepperModule} from "@angular/material/stepper";
 
 
 @Component({
@@ -12,10 +13,14 @@ import {NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
   templateUrl: './form-wizard-container.html',
   styleUrl: './form-wizard-container.scss',
   standalone: true,
-  imports: [forwardRef(() => FormWizard), CdkStepperModule, ReactiveFormsModule, NgIf, HeaderComponent, NgForOf, NgxTouchKeyboardModule, TranslateModule],
+  imports: [forwardRef(() => FormWizard),
+    CdkStepperModule, ReactiveFormsModule,
+    NgIf, NgForOf, NgxTouchKeyboardModule, TranslateModule, LangSelectionComponent, MatStep,
+    MatStepperModule,
+    ReactiveFormsModule,
+  ],
 })
 export class FormWizardContainer {
-
   currentLocale = localStorage.getItem("lang");
   infoModalVisibility: boolean = false;
 
@@ -23,17 +28,18 @@ export class FormWizardContainer {
   gameModeForm!: FormGroup;
   teamDetailsForm!: FormGroup;
   nbTeams = 0;
+  isKeyboardOpen: boolean = false;
 
   teams: any[] = [];
   linearMode: boolean = true;
   checkedModalVisibility: boolean = false;
+  animationClass: string = "animate__slideInRight";
 
   constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService) {
   }
 
   ngAfterViewChecked() {
     this.cdRef.detectChanges();
-    console.log(this.teams)
   }
 
   ngOnInit() {
@@ -65,9 +71,15 @@ export class FormWizardContainer {
     }
   }
 
-  receiveMessage($event: string) {
-    if ($event === "returnToStart") {
+  receiveMessage($event: { name: string, value: any }) {
+    if ($event.name === "returnToStart") {
       this.returnToStart();
+    } else if ($event.name === "prev") {
+      console.log("goind back")
+      this.animationClass = "animate__slideInLeft";
+    } else if ($event.name === "next") {
+      console.log("goind next")
+      this.animationClass = "animate__slideInRight";
     }
   }
 
@@ -132,7 +144,7 @@ export class FormWizardContainer {
     this.teamDetailsForm.reset();
     this.nbTeams = 0;
     this.teams = [];
-    window.location.href = "/lang-select";
+    window.location.href = "";
   }
 
   toggleInfoModal() {
@@ -172,6 +184,16 @@ export class FormWizardContainer {
   translateModalTextInformation() {
     return this.translate.instant('modal-text-information')
   }
+
+  custopOpenKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
+    this.isKeyboardOpen = !this.isKeyboardOpen;
+    touchKeyboard.openPanel();
+  }
+
+  customCloseKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
+    this.isKeyboardOpen = !this.isKeyboardOpen;
+    touchKeyboard.closePanel();
+  }
 }
 
 @Component({
@@ -180,11 +202,24 @@ export class FormWizardContainer {
   styleUrl: './form-wizard.component.scss',
   providers: [{provide: CdkStepper, useExisting: FormWizard}],
   standalone: true,
-  imports: [NgTemplateOutlet, CdkStepperModule, HeaderComponent, TranslateModule, NgIf],
+  imports: [NgTemplateOutlet, CdkStepperModule, TranslateModule, NgIf],
 })
 export class FormWizard extends CdkStepper {
-  @Output() messageEvent = new EventEmitter<string>();
+  @Output() messageEvent = new EventEmitter<{ name: string, value: any }>();
   cancelModalVisibility: boolean = false;
+
+
+  override previous() {
+    console.log('going back');
+    this.messageEvent.emit({name: "prev", value: null});
+    super.previous();
+  }
+
+  override next() {
+    console.log('going next');
+    this.messageEvent.emit({name: "next", value: null});
+    super.next();
+  }
 
   selectStepByIndex(index: number): void {
     this.selectedIndex = index;
@@ -194,12 +229,12 @@ export class FormWizard extends CdkStepper {
     if (this.selectedIndex === 0) {
       window.location.href = "/lang-select";
     } else {
-      this.selectedIndex--;
+      this.previous();
     }
   }
 
   returnToStart() {
-    this.messageEvent.emit("returnToStart");
+    this.messageEvent.emit({name: "returnToStart", value: null});
   }
 
   toggleCancelModal() {

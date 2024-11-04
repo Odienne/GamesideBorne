@@ -1,16 +1,8 @@
-.lang-selection {
-  width: 100%;
-  background: rgb(47, 51, 71);
-}
-
 .lang-selection__content {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
-  width: 80%;
-  margin: auto;
 
   height: calc(100vh - 120px);
 }

@@ -8,9 +8,6 @@ export const routes: Routes = [
     path: "", component: HomeComponent
   },
   {
-    path: "lang-select", component: LangSelectionComponent
-  },
-  {
     path: "form-wizard", component: FormWizardContainer
   },
   {

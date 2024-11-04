@@ -1,6 +1,11 @@
-<form-wizard (messageEvent)="receiveMessage($event)" [linear]="linearMode">
+<form-wizard [linear]="linearMode">
+  <cdk-step>
+    <div class="step-container animate__animated {{animationClass}}   ">
+      <app-lang-selection></app-lang-selection>
+    </div>
+  </cdk-step>
   <cdk-step [stepControl]="form">
-    <div class="step-container">
+    <div class="step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
       <div>
         <h1 class="step-title">{{ "nb-team-in-group-title" | translate }}</h1>
       </div>
@@ -29,8 +34,9 @@
                    ngxTouchKeyboardFullScreen
                    inputmode='text'
                    #touchKeyboard="ngxTouchKeyboard"
-                   (focus)="touchKeyboard.openPanel()"
-                   (blur)="touchKeyboard.closePanel()"
+                   (focus)="custopOpenKeyboard(touchKeyboard)"
+                   (blur)="customCloseKeyboard(touchKeyboard)"
+                   (touchend)="customCloseKeyboard(touchKeyboard)"
             >
           </div>
 
@@ -42,7 +48,7 @@
     </div>
   </cdk-step>
   <cdk-step [stepControl]="gameModeForm">
-    <div class="step-container">
+    <div class="step-container animate__animated {{animationClass}}   ">
       <div>
         <h1 class="step-title">{{ "choose-gamemode-title" | translate }}</h1>
       </div>
@@ -115,7 +121,7 @@
 
   <div *ngFor="let team of teams; index as i">
     <cdk-step [stepControl]="teamDetailsForm">
-      <div class="step-container">
+      <div class="step-container animate__animated {{animationClass}}   ">
         <div>
           <h1 class="step-title">{{"compose-your" | translate}} <span class="ft-gotham-black">{{ team.id }}</span></h1>
         </div>
@@ -172,7 +178,7 @@
       </div>
     </cdk-step>
     <cdk-step [stepControl]="teamDetailsForm">
-      <div class="step-container">
+      <div class="step-container animate__animated {{animationClass}}   ">
         <div>
           <h1 class="step-title"><span class="ft-gotham-black">{{ team.id }}</span> {{ teamDetailsForm.value.teamName }}
           </h1>
