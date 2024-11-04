@@ -1,75 +1,74 @@
-import {Component, EventEmitter, forwardRef, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Output} from '@angular/core';
 import {CdkStepper, CdkStepperModule} from '@angular/cdk/stepper';
 import {NgForOf, NgIf, NgTemplateOutlet} from '@angular/common';
 import {TranslateModule} from "@ngx-translate/core";
 import {HeaderComponent} from "../header/header.component";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {NgxTouchKeyboardModule }  from 'ngx-touch-keyboard';
+import {NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
 
 
 @Component({
   selector: 'form-wizard-container',
   templateUrl: './form-wizard-container.html',
-  styleUrl: './form-wizard-container.css',
+  styleUrl: './form-wizard-container.scss',
   standalone: true,
   imports: [forwardRef(() => FormWizard), CdkStepperModule, ReactiveFormsModule, NgIf, HeaderComponent, NgForOf, NgxTouchKeyboardModule],
 })
 export class FormWizardContainer {
 
   currentLocale = localStorage.getItem("lang");
+  infoModalVisibility: boolean = false;
 
   form!: FormGroup;
   gameModeForm!: FormGroup;
   teamDetailsForm!: FormGroup;
+  nbTeams = 0;
 
   teams: any[] = [];
+  linearMode: boolean = true;
+  checkedModalVisibility: boolean = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef) {
+  }
+
+  ngAfterViewChecked() {
+    this.cdRef.detectChanges();
   }
 
   ngOnInit() {
     this.form = this.fb.group({
-      nbTeams: [null, [Validators.required, Validators.min(1)]],
-      groupName: ["", Validators.minLength(3)],
-    })
-    this.gameModeForm = this.fb.group({
-      gamemode: [null, [Validators.required]],
+      nbTeams: [this.nbTeams, [Validators.required, Validators.min(1)]],
+      groupName: [null],
     })
     this.gameModeForm = this.fb.group({
       gamemode: [null, [Validators.required]],
     })
     this.teamDetailsForm = this.fb.group({
       teamName: ["", [Validators.required, Validators.minLength(3)]],
+      teamEmail: ["", [Validators.required, Validators.email]],
+      nbPlayer: [null, [Validators.required, Validators.min(2), Validators.max(5)]],
     })
   }
 
   submitForm() {
     if (this.form.valid) {
-      console.log(this.form.value);
-
       for (let i = 0; i < this.form.value.nbTeams; i++) {
-        this.teams.push({id: "team" + (i + 1), name: "Equipe" + (i + 1)});
+        this.teams.push({id: "équipe" + (i + 1), name: ""});
       }
-      console.log(this.teams);
     }
   }
 
   receiveMessage($event: string) {
-    console.log($event);
-  }
-
-  submitGameModeForm() {
-    if (this.gameModeForm.valid) {
-      console.log(this.gameModeForm.value);
+    if ($event === "returnToStart") {
+      this.returnToStart();
     }
   }
 
   submitTeamDetailsForm(id: any) {
     if (this.teamDetailsForm.valid) {
       let index = this.teams.findIndex(team => team.id === id);
-      console.log(this.teams)
-      console.log(this.teams[index])
-      this.teams[index].team = this.teamDetailsForm.value.teamName;
+      this.teams[index].name = this.teamDetailsForm.value.teamName;
+
     }
   }
 
@@ -82,9 +81,61 @@ export class FormWizardContainer {
       }
     })
 
-
     return allTeamAreCompleted;
+  }
 
+  minusOneTeam() {
+    if (this.nbTeams > 0) {
+      this.nbTeams--;
+    }
+    this.form.controls['nbTeams'].setValue(this.nbTeams);
+
+    console.log(this.nbTeams)
+    if (this.nbTeams > 1) {
+      this.form.controls['groupName'].setValidators([
+        Validators.required,
+        Validators.minLength(3)
+      ]);
+    } else if (this.nbTeams < 2) {
+      this.form.controls['groupName'].setValidators([]);
+    }
+    console.log(this.form.value)
+    this.form.controls['groupName'].updateValueAndValidity();
+  }
+
+  addOneTeam() {
+    if (this.nbTeams < 10) {
+      this.nbTeams++;
+    }
+    this.form.controls['nbTeams'].setValue(this.nbTeams);
+
+    if (this.nbTeams > 1) {
+      this.form.controls['groupName'].setValidators([
+        Validators.required,
+        Validators.minLength(3)
+      ]);
+    } else if (this.nbTeams < 2) {
+      this.form.controls['groupName'].setValidators([]);
+    }
+    this.form.controls['groupName'].updateValueAndValidity();
+  }
+
+
+  returnToStart() {
+    this.form.reset();
+    this.gameModeForm.reset();
+    this.teamDetailsForm.reset();
+    this.nbTeams = 0;
+    this.teams = [];
+    window.location.href = "/lang-select";
+  }
+
+  toggleInfoModal() {
+    this.infoModalVisibility = !this.infoModalVisibility;
+  }
+
+  toggleCheckedModal() {
+    if (!this.allTeamAreCompleted()) this.checkedModalVisibility = !this.checkedModalVisibility;
   }
 }
 
@@ -98,12 +149,25 @@ export class FormWizardContainer {
 })
 export class FormWizard extends CdkStepper {
   @Output() messageEvent = new EventEmitter<string>();
+  cancelModalVisibility: boolean = false;
 
   selectStepByIndex(index: number): void {
     this.selectedIndex = index;
   }
 
-  sendMessage() {
-    this.messageEvent.emit(this._getFocusIndex()?.toString());
+  goBack() {
+    if (this.selectedIndex === 0) {
+      window.location.href = "/lang-select";
+    } else {
+      this.selectedIndex--;
+    }
+  }
+
+  returnToStart() {
+    this.messageEvent.emit("returnToStart");
+  }
+
+  toggleCancelModal() {
+    this.cancelModalVisibility = !this.cancelModalVisibility;
   }
 }

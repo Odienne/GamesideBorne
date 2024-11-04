@@ -1,6 +1,6 @@
 .lang-selection {
   width: 100%;
-  background: rgba(35, 36, 43, 0.8);
+  background: rgb(47, 51, 71);
 }
 
 .lang-selection__content {
@@ -14,23 +14,6 @@
 
   height: calc(100vh - 120px);
 }
-
-.lang-selection-btn {
-  margin-top: 90px;
-  padding: 16px 20px;
-  font-size: 1.6em;
-  border: none;
-  text-transform: uppercase;
-  border-radius: 100px;
-  background: #75bf67;
-  cursor: pointer;
-
-  &:disabled {
-    background: rgba(35, 36, 43, 0.51);
-    color: rgba(200, 200, 200, 0.17);
-  }
-}
-
 
 .lang-selector-container {
   display: flex;
@@ -64,6 +47,6 @@
   }
 
   &:active, &.active {
-    border: 6px solid #75bf67;
+    border: 6px solid #72b74d;
   }
 }

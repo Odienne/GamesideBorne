@@ -1,8 +1,8 @@
 <section class="container">
   <header>
-    <div>
-      <button cdkStepperPrevious class="back-btn">
-        &larr;
+    <div class="btn-container back-container">
+      <button class="back-btn" (click)="goBack()">
+        <img src="./assets/icons/back.svg" alt="">
       </button>
     </div>
 
@@ -10,24 +10,36 @@
       <img src="/assets/images/logo.svg" alt="logo">
     </div>
 
-    <div>
-      <button *ngIf="selectedIndex > 0" (click)="sendMessage()" cdkStepperNext class="next-btn">
-        &rarr;
+    <div class="btn-container {{selectedIndex > 0 && selectedIndex +1 <steps.length ? 'next-container' : ''}}">
+      <button *ngIf="selectedIndex > 0 && selectedIndex +1 <steps.length" cdkStepperNext
+              class="next-btn">
+        <img src="./assets/icons/next.svg" alt="">
       </button>
     </div>
   </header>
 
   <div [ngTemplateOutlet]="selected ? selected.content : null"></div>
 
-  <footer class="example-step-navigation-bar">
-    <button class="example-nav-button" cdkStepperPrevious>&larr;</button>
-    @for (step of steps; track step; let i = $index) {
-      <button
-        class="example-step"
-        [class.example-active]="selectedIndex === i"
-        (click)="selectStepByIndex(i)">Step {{ i + 1 }}
-      </button>
-    }
-    <button class="example-nav-button" cdkStepperNext>&rarr;</button>
-  </footer>
+  <button class="cancel-btn" (click)="toggleCancelModal()">
+    <img src="./assets/icons/cancel.svg" alt="">
+  </button>
+
+  <div class="modal" *ngIf="cancelModalVisibility">
+    <!-- Modal content -->
+    <div class="modal-container">
+      <div class="modal-content">
+          <span (click)="toggleCancelModal()">
+          <img class="icon info" src="./assets/icons/close_modal.svg" alt="">
+        </span>
+
+        <div class="modal-header">
+          <p class="modal-title">Voulez-vous annuler l'enregistrement en cours ?</p>
+        </div>
+
+        <div class="flex-container">
+          <button class="valid-btn no-margin white-btn modal-valid-btn" (click)="returnToStart()">Valider</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

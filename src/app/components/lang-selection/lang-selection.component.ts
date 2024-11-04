@@ -1,16 +1,19 @@
 import {Component} from '@angular/core';
 import {HeaderComponent} from "../header/header.component";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
+import {CdkStepperNext} from "@angular/cdk/stepper";
 
 @Component({
   selector: 'app-lang-selection',
   standalone: true,
-  imports: [
-    HeaderComponent,
-    NgForOf,
-    TranslateModule
-  ],
+    imports: [
+        HeaderComponent,
+        NgForOf,
+        TranslateModule,
+        CdkStepperNext,
+        NgIf
+    ],
   templateUrl: './lang-selection.component.html',
   styleUrl: './lang-selection.component.scss'
 })
