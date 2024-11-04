@@ -33,6 +33,7 @@ export class FormWizardContainer {
 
   ngAfterViewChecked() {
     this.cdRef.detectChanges();
+    console.log(this.teams)
   }
 
   ngOnInit() {
@@ -52,6 +53,12 @@ export class FormWizardContainer {
 
   submitForm() {
     if (this.form.valid) {
+      /*need to reset the form after each submit to avoid a bug*/
+      /*also need to reset other forms, otherwise coming back to this screen will cause a bug*/
+      this.gameModeForm.reset();
+      this.teamDetailsForm.reset();
+      this.teams = [];
+
       for (let i = 0; i < this.form.value.nbTeams; i++) {
         this.teams.push({id: "équipe" + (i + 1), name: ""});
       }
@@ -90,7 +97,6 @@ export class FormWizardContainer {
     }
     this.form.controls['nbTeams'].setValue(this.nbTeams);
 
-    console.log(this.nbTeams)
     if (this.nbTeams > 1) {
       this.form.controls['groupName'].setValidators([
         Validators.required,
@@ -99,7 +105,6 @@ export class FormWizardContainer {
     } else if (this.nbTeams < 2) {
       this.form.controls['groupName'].setValidators([]);
     }
-    console.log(this.form.value)
     this.form.controls['groupName'].updateValueAndValidity();
   }
 
@@ -135,7 +140,25 @@ export class FormWizardContainer {
   }
 
   toggleCheckedModal() {
-    if (!this.allTeamAreCompleted()) this.checkedModalVisibility = !this.checkedModalVisibility;
+    //prevent user from closing last modal, acts as a confirmation instead and sends data before returning to home screen
+    if (this.allTeamAreCompleted()) {
+      this.sendDataIfAllTeamAreCompleted();
+    }
+      this.checkedModalVisibility = !this.checkedModalVisibility;
+  }
+
+  sendDataIfAllTeamAreCompleted() {
+    if (this.allTeamAreCompleted()) {
+      //todo send data to backend
+      console.log('send data to backend')
+
+      this.form.reset();
+      this.gameModeForm.reset();
+      this.teamDetailsForm.reset();
+      this.nbTeams = 0;
+      this.teams = [];
+      window.location.href = "";
+    }
   }
 }
 

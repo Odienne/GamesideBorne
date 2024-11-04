@@ -195,7 +195,7 @@
           <div class="modal-content modal-green">
           <span (click)="toggleCheckedModal()">
           <img class="icon info" src="./assets/icons/close_modal.svg" alt="">
-        </span>
+          </span>
 
             <div class="modal-header">
               <p class="modal-title m-b">L'{{ team.id }} {{ teamDetailsForm.value.teamName }} est prête !</p>
@@ -206,7 +206,7 @@
             </div>
 
 
-            <button class="check-valid" cdkStepperNext>
+            <button class="check-valid" cdkStepperNext (click)="sendDataIfAllTeamAreCompleted()">
               <img class="icon check" src="./assets/icons/check.svg" alt="">
             </button>
           </div>

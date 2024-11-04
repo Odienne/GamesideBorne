@@ -20,13 +20,4 @@ export class AppComponent {
     this.translate.setDefaultLang(this.defaultLang);
     this.translate.use(this.defaultLang);
   }
-
-  ngOnInit() {
-    /*Retour sur l'écran d'accueil au bout d'une minute*/
-    setTimeout(() => {
-      if (window.location.pathname !== "/") {
-        window.location.href = '';
-      }
-    }, 100000 * 6)
-  }
 }
