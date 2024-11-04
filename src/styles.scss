@@ -1,0 +1,365 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+  padding: 0;
+  margin: 0;
+}
+
+:host {
+  overflow: hidden;
+}
+
+html, body {
+  overflow: hidden;
+}
+
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-Medium.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-Black.otf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-Bold.otf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-BookItalic.otf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-Book.otf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'LeonSans';
+  src: url('/assets/fonts/LeoSansBold.otf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'EdoSZ';
+  src: url('/assets/fonts/edosz.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+.ft-gotham {
+  font-family: GothamNarrow, sans-serif;
+}
+.ft-gotham-black {
+  font-family: GothamNarrow, sans-serif;
+  font-weight: 900;
+}
+.ft-leoSans {
+  font-family: LeonSans, sans-serif;
+}
+
+.valid-btn {
+  margin-top: 90px;
+  padding: 16px 60px;
+  font-size: 1.6em;
+  border: none;
+  text-transform: uppercase;
+  border-radius: 100px;
+  background: #72b74d;
+  cursor: pointer;
+  font-family: GothamNarrow, sans-serif;
+  font-weight: normal;
+  color: #141a26;
+
+  &.no-margin {
+    margin-top: 0;
+  }
+
+  &.white-btn {
+    background: white;
+  }
+
+  &:disabled {
+    background: #141a26;
+    color: #2f3347;
+  }
+}
+
+.micro {
+  top: 100px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  background-color: #e38c12;
+  border-radius: 50%;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+
+  img {
+    transform: rotate(-15deg);
+    width: 60px;
+  }
+}
+
+.micro:before,
+.micro:after {
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: solid 3px #e38c12;
+  border-radius: 50%;
+}
+
+.micro:before {
+  animation: ripple 2s linear infinite;
+}
+
+.micro:after {
+  animation: ripple 2s 1s linear infinite;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+:root {
+  --tk-color-text: #ffffff !important;
+  --tk-background: rgba(255, 255, 255, 0.1) !important;
+  --tk-background-button: rgba(255, 255, 255, 0.2) !important;
+  --tk-background-button-fn: rgba(255, 255, 255, 0.2) !important;
+  --tk-background-button-active: rgba(255, 255, 255, 0.6) !important;
+}
+
+.touch-keyboard {
+  padding: 2rem 3rem;
+  background-image: linear-gradient(to right, #ff9966, #ff5e62);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5.5px);
+  -webkit-backdrop-filter: blur(5.5px);
+}
+
+.touch-keyboard-key {
+  box-shadow: 0 0 20px rgba(255, 163, 44, 0.2) !important;
+  backdrop-filter: blur(5.5px) !important;
+  -webkit-backdrop-filter: blur(5.5px) !important;
+}
+
+ngx-touch-keyboard {
+  padding: 1rem 2rem !important;
+}
+
+
+.cancel-btn {
+  position: absolute;
+  bottom: -8px;
+  right: 30px;
+  cursor: pointer;
+
+  height: 60px;
+  width: 40px;
+  background: #b41f1f;
+
+  outline: 0;
+  border: 0;
+  border-radius: 8px;
+
+  img {
+    width: 16px;
+  }
+}
+
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+
+.edoSZ {
+  font-family: "EdoSZ", sans-serif !important;
+}
+
+
+.modal {
+  position: absolute;
+  z-index: 10;
+  top: 120px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  width: 100%;
+  height: 100%;
+}
+
+.modal-container {
+  margin: 15% auto;
+  width: 60%;
+  border-radius: 32px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+
+  .info {
+    position: absolute;
+    left: 30px;
+    top: -8px;
+    width: 60px;
+    cursor: pointer;
+
+    img {
+      width: 60px;
+    }
+  }
+
+  .modal-content {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 32px;
+    background: linear-gradient(90deg, #b41f1f, #e30613);
+
+    .modal-header {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 32px 32px 0 0;
+      min-height: 200px;
+
+      &.with-border {
+        border: 6px solid #b41f1f;
+      }
+
+      &.with-bg {
+        background: url("/assets/images/bg-traits.png");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+      }
+    }
+
+    &.modal-green {
+      background: #72b74d;
+    }
+
+    .check-valid {
+      position: absolute;
+      bottom: -50px;
+      border-radius: 50%;
+      background: #72b74d;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 100px;
+      cursor: pointer;
+      border: none;
+
+      img {
+        width: 60px;
+      }
+    }
+  }
+
+
+}
+
+.modal-valid-btn {
+  margin-bottom: 30px;
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 2em;
+  width: 80%;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+  margin-top: 60px;
+  font-family: GothamNarrow, sans-serif;
+
+  &.m-b {
+    margin-bottom: 60px;
+  }
+}
+
+.modal-final-title {
+  text-align: center;
+  font-size: 1.8em;
+  color: #141a26;
+  text-transform: uppercase;
+
+  width: 80%;
+  margin: auto;
+
+  margin-bottom: 90px;
+  font-family: GothamNarrow, sans-serif;
+
+}
+
+
+.modal-text {
+  &.with-bg {
+    background: url("/assets/images/bg-traits.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  line-height: 1.5em;
+  text-align: center;
+  font-size: 1.2em;
+  width: 80%;
+  color: #ffffff;
+  margin: 0;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  font-family: GothamNarrow, sans-serif;
+  font-weight: 300;
+}
+
+.modal-footer {
+  text-align: center;
+  background: white;
+  padding: 20px 32px;
+
+  p {
+    font-size: 1.6em;
+    text-transform: uppercase;
+    font-family: GothamNarrow, sans-serif;
+  }
+}
+
+
+.flex-container, form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
+}
