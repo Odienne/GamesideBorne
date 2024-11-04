@@ -141,10 +141,11 @@ export class FormWizardContainer {
 
   toggleCheckedModal() {
     //prevent user from closing last modal, acts as a confirmation instead and sends data before returning to home screen
-    if (this.allTeamAreCompleted()) {
+    /*must only trigger if modal was shown once, and on cancel btn*/
+    if (this.checkedModalVisibility && this.allTeamAreCompleted()) {
       this.sendDataIfAllTeamAreCompleted();
     }
-      this.checkedModalVisibility = !this.checkedModalVisibility;
+    this.checkedModalVisibility = !this.checkedModalVisibility;
   }
 
   sendDataIfAllTeamAreCompleted() {
