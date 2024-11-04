@@ -1,5 +1,3 @@
-<app-header></app-header>
-
 <div class="lang-selection">
   <div class="lang-selection__content">
     <div class="lang-selector-container">
@@ -9,7 +7,7 @@
       </div>
     </div>
     <div>
-      <button (click)="goToFormWizard()" [disabled]="selected === ''" class="valid-btn">
+      <button cdkStepperNext [disabled]="selected === ''" class="valid-btn">
         {{ "valid-btn" | translate }}
       </button>
     </div>

@@ -1,4 +1,4 @@
-import {Component, HostListener} from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +13,6 @@ import {Component, HostListener} from '@angular/core';
 })
 export class HomeComponent {
   protected start = () => {
-    window.location.href = '/lang-select';
+    window.location.href = '/form-wizard';
   }
 }
