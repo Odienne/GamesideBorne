@@ -1,4 +1,18 @@
 {
-  "Valider": "Valider",
-  "step": "étape"
+  "valid-btn": "Valider",
+  "cancel-current-modal-title": "Voulez-vous annuler l'enregistrement en cours ?",
+  "nb-team-in-group-title": "Combien d'équipes dans votre groupe ?",
+  "group-name-placeholder": "Nom du groupe (ex: Anniversaire Maxime, EVJF Marie...)",
+  "choose-gamemode-title": "Choississez votre mode de jeu",
+  "classic-gamemode-title": "Mode de jeu classique",
+  "halloween-gamemode-title": "Mode de jeu Halloween",
+  "coming-soon": "Prochainement",
+  "nb-players": "Nombre de joueurs",
+  "team-name-placeholder": "Nom de l'équipe",
+  "team-email-placeholder": "Email (pour recevoir votre fiche des scores)",
+  "please-scan-device": "Veuillez poser votre badge contre le lecteur au dessus de cet écran !",
+  "your-teams-are-ready": "vos équipes sont formés, dirigez-vous vers votre gamemaster !",
+  "the-team-is-ready": "<span class=\"ft-gotham-black\">L'{{ teamId }}</span> {{ teamName }} <br>est prête !",
+  "compose-your": "Composez votre",
+  "modal-text-information": "<span class=\"ft-leoSans\">L’Action side</span> avec les régles de bases.\n    <br>\n    <br>\n\n      16 salles sur plus de 600m2 pour s’affronter en équipes\n    dans des univers thématiques ultra immersifs :\n      <span class=\"ft-leoSans\">Magic School</span>, <span class=\"ft-leoSans\">Indiana Run</span>,\n      <span class=\"ft-leoSans\">Stars Zone</span> ou\n    <span class=\"ft-leoSans\">Pirate Bay</span>, il y en a pour tous les goûts !"
 }

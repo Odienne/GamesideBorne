@@ -24,7 +24,7 @@ export class LangSelectionComponent {
     "es",
   ];
 
-  selected = "";
+  selected = localStorage.getItem("lang") || "";
 
   constructor(private translateService: TranslateService) {
   }

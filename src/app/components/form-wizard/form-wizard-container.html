@@ -2,7 +2,7 @@
   <cdk-step [stepControl]="form">
     <div class="step-container">
       <div>
-        <h1 class="step-title">Combien d'équipes dans votre groupe ?</h1>
+        <h1 class="step-title">{{ "nb-team-in-group-title" | translate }}</h1>
       </div>
 
       <div class="manage-nbTeams-container">
@@ -24,17 +24,18 @@
 
           <div class="flex-container" *ngIf="nbTeams > 1">
             <input class="custom-text-input" autofocus required type="text" formControlName="groupName"
-                   placeholder="Nom du groupe (ex: Anniversaire Maxime, EVJF Marie...)"
+                   placeholder="{{'group-name-placeholder' | translate}}"
                    ngxTouchKeyboard
                    ngxTouchKeyboardFullScreen
                    inputmode='text'
                    #touchKeyboard="ngxTouchKeyboard"
                    (focus)="touchKeyboard.openPanel()"
+                   (blur)="touchKeyboard.closePanel()"
             >
           </div>
 
           <button class="valid-btn" cdkStepperNext [disabled]="!this.form.valid">
-            Valider
+            {{ "valid-btn" | translate }}
           </button>
         </form>
       </div>
@@ -43,7 +44,7 @@
   <cdk-step [stepControl]="gameModeForm">
     <div class="step-container">
       <div>
-        <h1 class="step-title">Choississez votre mode de jeu</h1>
+        <h1 class="step-title">{{ "choose-gamemode-title" | translate }}</h1>
       </div>
 
       <div class="flex-container">
@@ -60,7 +61,7 @@
                 <img src="/assets/icons/man.svg" alt="" class="center-icon">
               </div>
               <div class="card-footer">
-                <p class="card-footer-title">Mode de jeu classique</p>
+                <p class="card-footer-title">{{ "classic-gamemode-title" | translate }}</p>
               </div>
             </label>
 
@@ -71,10 +72,10 @@
 
               <div class="card-header halloween">
                 <img src="/assets/icons/ghost.svg" alt="" class="center-icon">
-                <div class="ribbon ribbon-top-right"><span>Coming soon</span></div>
+                <div class="ribbon ribbon-top-right"><span>{{ "coming-soon" | translate }}</span></div>
               </div>
               <div class="card-footer">
-                <p class="card-footer-title edoSZ">Mode de jeu Halloween</p>
+                <p class="card-footer-title edoSZ">{{ "halloween-gamemode-title" | translate }}</p>
               </div>
             </label>
           </div>
@@ -83,7 +84,7 @@
           <input id="gamemode2" hidden name="gamemode" formControlName="gamemode" type="radio" value="halloween">
 
           <button class="valid-btn" cdkStepperNext [disabled]="gameModeForm.invalid">
-            Valider
+            {{ "valid-btn" | translate }}
           </button>
         </form>
       </div>
@@ -98,21 +99,13 @@
         </span>
 
           <div class="modal-header with-bg">
-            <p class="modal-text">
-              <span class="ft-leoSans">L’Action side</span> avec les régles de bases.
-              <br>
-              <br>
+            <p class="modal-text" [innerHTML]="translateModalTextInformation()">
 
-              16 salles sur plus de 600m2 pour s’affronter en équipes
-              dans des univers thématiques ultra immersifs :
-              <span class="ft-leoSans">Magic School</span>, <span class="ft-leoSans">Indiana Run</span>,
-              <span class="ft-leoSans">Stars Zone</span> ou
-              <span class="ft-leoSans">Pirate Bay</span>, il y en a pour tous les goûts !
             </p>
           </div>
           <div class="modal-footer">
             <p>
-              Mode de jeu Classique
+              {{ "classic-gamemode-title" | translate }}
             </p>
           </div>
         </div>
@@ -124,12 +117,12 @@
     <cdk-step [stepControl]="teamDetailsForm">
       <div class="step-container">
         <div>
-          <h1 class="step-title">Composez votre <span class="ft-gotham-black">{{ team.id }}</span></h1>
+          <h1 class="step-title">{{"compose-your" | translate}} <span class="ft-gotham-black">{{ team.id }}</span></h1>
         </div>
 
         <div class="flex-container">
           <form [formGroup]="teamDetailsForm" class="custom-form" (ngSubmit)="submitTeamDetailsForm(team.id)">
-            <p class="step-subtitle">Nombre de joueurs</p>
+            <p class="step-subtitle">{{ "nb-players"| translate }}</p>
             <div class="flex-row label-container">
               <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 2 ? 'selected' : ''}}" for="nbPlayer2">
                 2
@@ -150,7 +143,8 @@
             <input id="nbPlayer4" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="4">
             <input id="nbPlayer5" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="5">
 
-            <input class="custom-text-input" type="text" formControlName="teamName" placeholder="Nom de l'équipe"
+            <input class="custom-text-input" type="text" formControlName="teamName"
+                   placeholder="{{'team-name-placeholder' | translate}}"
                    required
                    ngxTouchKeyboard
                    ngxTouchKeyboardFullScreen
@@ -160,7 +154,7 @@
                    (blur)="touchKeyboard.closePanel()"
             >
             <input class="custom-text-input" type="email" formControlName="teamEmail"
-                   placeholder="Email (pour recevoir votre fiche des scores)"
+                   placeholder="{{'team-email-placeholder' | translate}}"
                    required
                    ngxTouchKeyboard
                    ngxTouchKeyboardFullScreen
@@ -171,7 +165,7 @@
             >
 
             <button class="valid-btn" cdkStepperNext [disabled]="teamDetailsForm.invalid">
-              Valider
+              {{ "valid-btn" | translate }}
             </button>
           </form>
         </div>
@@ -180,10 +174,11 @@
     <cdk-step [stepControl]="teamDetailsForm">
       <div class="step-container">
         <div>
-          <h1 class="step-title"><span class="ft-gotham-black">{{ team.id }}</span> {{ teamDetailsForm.value.teamName }}</h1>
+          <h1 class="step-title"><span class="ft-gotham-black">{{ team.id }}</span> {{ teamDetailsForm.value.teamName }}
+          </h1>
         </div>
 
-        <p class="step-subtitle">Veuillez poser votre badge contre le lecteur au dessus de cet écran !</p>
+        <p class="step-subtitle">{{ "please-scan-device" | translate }}</p>
 
         <button class="micro" (click)="toggleCheckedModal()">
           <img src="/assets/icons/waves.png" width="50" alt="">
@@ -191,7 +186,6 @@
       </div>
 
       <div class="modal" *ngIf="checkedModalVisibility">
-        <!-- Modal content -->
         <div class="modal-container">
           <div class="modal-content modal-green">
           <span (click)="toggleCheckedModal()">
@@ -199,14 +193,13 @@
           </span>
 
             <div class="modal-header">
-              <p class="modal-title m-b"><span class="ft-gotham-black">L'{{ team.id }}</span> {{ teamDetailsForm.value.teamName }} est prête !</p>
+              <p class="modal-title m-b" [innerHTML]="teamIsReadyTranslation(team.id, teamDetailsForm.value.teamName)"></p>
 
               <div *ngIf="allTeamAreCompleted()">
-                <p class="modal-final-title">{{ form.value.groupName ?? teamDetailsForm.value.teamName }} vos équipes
-                  sont formés, dirigez-vous vers votre gamemaster !</p>
+                <p
+                  class="modal-final-title">{{ form.value.groupName ?? teamDetailsForm.value.teamName }} {{ "your-teams-are-ready" | translate }}</p>
               </div>
             </div>
-
 
             <button class="check-valid" cdkStepperNext (click)="sendDataIfAllTeamAreCompleted()">
               <img class="icon check" src="./assets/icons/check.svg" alt="">

@@ -33,11 +33,15 @@
         </span>
 
         <div class="modal-header">
-          <p class="modal-title">Voulez-vous annuler l'enregistrement en cours ?</p>
+          <p class="modal-title">
+            {{ "cancel-current-modal-title" | translate }}
+          </p>
         </div>
 
         <div class="flex-container">
-          <button class="valid-btn no-margin white-btn modal-valid-btn" (click)="returnToStart()">Valider</button>
+          <button class="valid-btn no-margin white-btn modal-valid-btn"
+                  (click)="returnToStart()">{{ "valid-btn" | translate }}
+          </button>
         </div>
       </div>
     </div>

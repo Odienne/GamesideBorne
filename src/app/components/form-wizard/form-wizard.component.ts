@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Output} from '@angular/core';
 import {CdkStepper, CdkStepperModule} from '@angular/cdk/stepper';
 import {NgForOf, NgIf, NgTemplateOutlet} from '@angular/common';
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {HeaderComponent} from "../header/header.component";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
@@ -12,7 +12,7 @@ import {NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
   templateUrl: './form-wizard-container.html',
   styleUrl: './form-wizard-container.scss',
   standalone: true,
-  imports: [forwardRef(() => FormWizard), CdkStepperModule, ReactiveFormsModule, NgIf, HeaderComponent, NgForOf, NgxTouchKeyboardModule],
+  imports: [forwardRef(() => FormWizard), CdkStepperModule, ReactiveFormsModule, NgIf, HeaderComponent, NgForOf, NgxTouchKeyboardModule, TranslateModule],
 })
 export class FormWizardContainer {
 
@@ -28,7 +28,7 @@ export class FormWizardContainer {
   linearMode: boolean = true;
   checkedModalVisibility: boolean = false;
 
-  constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef) {
+  constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService) {
   }
 
   ngAfterViewChecked() {
@@ -160,6 +160,17 @@ export class FormWizardContainer {
       this.teams = [];
       window.location.href = "";
     }
+  }
+
+  teamIsReadyTranslation(id: any, teamName: string) {
+    return this.translate.instant('the-team-is-ready', {
+      teamId: id,
+      teamName: teamName,
+    })
+  }
+
+  translateModalTextInformation() {
+    return this.translate.instant('modal-text-information')
   }
 }
 

@@ -1,4 +1,18 @@
 {
-  "Valider": "Next",
-  "step": "Step"
+  "valid-btn": "Validate",
+  "cancel-current-modal-title": "Do you want to cancel the current recording?",
+  "nb-team-in-group-title": "How many teams in your group?",
+  "group-name-placeholder": "Name of your group (optional)",
+  "choose-gamemode-title": "Choose your game mode",
+  "classic-gamemode-title": "Classic game mode",
+  "halloween-gamemode-title": "Halloween game mode",
+  "coming-soon": "Coming soon",
+  "nb-players": "Numbers of players",
+  "team-name-placeholder": "Team name",
+  "team-email-placeholder": "Email (to receive your score sheet)",
+  "please-scan-device": "Please place your badge against\nthe reader above this screen!",
+  "your-teams-are-ready": "Your teams are formed, head to your Game Master!",
+  "the-team-is-ready": "<span class=\"ft-gotham-black\">{{ teamId }}</span> {{ teamName }} <br>is ready!",
+  "compose-your": "Compose your",
+  "modal-text-information": "<span class=\"ft-leoSans\">The Action side</span> with basic rules.<br><br>16 rooms over 600m2 to compete in teams in ultra-immersive themed universes: <span class=\"ft-leoSans\">Magic School</span>, <span class=\"ft-leoSans\">Indiana Run</span>, <span class=\"ft-leoSans\">Stars Zone</span> or <span class=\"ft-leoSans\">Pirate Bay</span>, there's something for every taste!"
 }
