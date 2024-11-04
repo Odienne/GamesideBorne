@@ -64,7 +64,7 @@
               </div>
             </label>
 
-            <label class="gamemode {{gameModeForm.value.gamemode === 'halloween' ? 'selected' : ''}}" for="gamemode2">
+            <label class="gamemode {{gameModeForm.value.gamemode === 'halloween' ? 'selected' : ''}}">
               <span (click)="toggleInfoModal()">
                 <img class="icon info" src="./assets/icons/information.svg" alt="">
               </span>
@@ -99,14 +99,15 @@
 
           <div class="modal-header with-bg">
             <p class="modal-text">
-              L’Action side avec les régles de bases.
+              <span class="ft-leoSans">L’Action side</span> avec les régles de bases.
               <br>
               <br>
 
               16 salles sur plus de 600m2 pour s’affronter en équipes
               dans des univers thématiques ultra immersifs :
-              Magic School, Indiana Run, Stars Zone ou
-              Pirate Bay, il y en a pour tous les goûts !
+              <span class="ft-leoSans">Magic School</span>, <span class="ft-leoSans">Indiana Run</span>,
+              <span class="ft-leoSans">Stars Zone</span> ou
+              <span class="ft-leoSans">Pirate Bay</span>, il y en a pour tous les goûts !
             </p>
           </div>
           <div class="modal-footer">
@@ -123,7 +124,7 @@
     <cdk-step [stepControl]="teamDetailsForm">
       <div class="step-container">
         <div>
-          <h1 class="step-title">Composez votre <span class="team-name">{{ team.id }}</span></h1>
+          <h1 class="step-title">Composez votre <span class="ft-gotham-black">{{ team.id }}</span></h1>
         </div>
 
         <div class="flex-container">
@@ -179,7 +180,7 @@
     <cdk-step [stepControl]="teamDetailsForm">
       <div class="step-container">
         <div>
-          <h1 class="step-title">{{ team.id }} {{ teamDetailsForm.value.teamName }}</h1>
+          <h1 class="step-title"><span class="ft-gotham-black">{{ team.id }}</span> {{ teamDetailsForm.value.teamName }}</h1>
         </div>
 
         <p class="step-subtitle">Veuillez poser votre badge contre le lecteur au dessus de cet écran !</p>
@@ -198,10 +199,11 @@
           </span>
 
             <div class="modal-header">
-              <p class="modal-title m-b">L'{{ team.id }} {{ teamDetailsForm.value.teamName }} est prête !</p>
+              <p class="modal-title m-b"><span class="ft-gotham-black">L'{{ team.id }}</span> {{ teamDetailsForm.value.teamName }} est prête !</p>
 
               <div *ngIf="allTeamAreCompleted()">
-                <p class="modal-final-title">{{form.value.groupName ?? teamDetailsForm.value.teamName}} vos équipes sont formés, dirigez-vous vers votre gamemaster !</p>
+                <p class="modal-final-title">{{ form.value.groupName ?? teamDetailsForm.value.teamName }} vos équipes
+                  sont formés, dirigez-vous vers votre gamemaster !</p>
               </div>
             </div>
 

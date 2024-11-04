@@ -13,9 +13,40 @@ html, body {
 }
 
 @font-face {
-  font-family: 'GothamNarrow-Medium';
+  font-family: 'GothamNarrow';
   src: url('/assets/fonts/GothamNarrow-Medium.otf') format('truetype');
   font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-Black.otf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-Bold.otf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-BookItalic.otf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'GothamNarrow';
+  src: url('/assets/fonts/GothamNarrow-Book.otf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'LeonSans';
+  src: url('/assets/fonts/LeoSansBold.otf') format('truetype');
+  font-weight: bold;
   font-style: normal;
 }
 
@@ -24,6 +55,18 @@ html, body {
   src: url('/assets/fonts/edosz.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+}
+
+
+.ft-gotham {
+  font-family: GothamNarrow, sans-serif;
+}
+.ft-gotham-black {
+  font-family: GothamNarrow, sans-serif;
+  font-weight: 900;
+}
+.ft-leoSans {
+  font-family: LeonSans, sans-serif;
 }
 
 .valid-btn {
@@ -35,7 +78,8 @@ html, body {
   border-radius: 100px;
   background: #72b74d;
   cursor: pointer;
-  font-family: GothamNarrow-Medium;
+  font-family: GothamNarrow, sans-serif;
+  font-weight: normal;
   color: #141a26;
 
   &.no-margin {
@@ -169,9 +213,8 @@ ngx-touch-keyboard {
   height: 100%;
 }
 
-/* Modal Content/Box */
 .modal-container {
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 15% auto;
   width: 60%;
   border-radius: 32px;
 
@@ -234,9 +277,7 @@ ngx-touch-keyboard {
       width: 100px;
       height: 100px;
       cursor: pointer;
-
       border: none;
-      cursor: pointer;
 
       img {
         width: 60px;
@@ -259,7 +300,7 @@ ngx-touch-keyboard {
   color: #ffffff;
   margin: 0;
   margin-top: 60px;
-  font-family: GothamNarrow-Medium;
+  font-family: GothamNarrow, sans-serif;
 
   &.m-b {
     margin-bottom: 60px;
@@ -276,7 +317,7 @@ ngx-touch-keyboard {
   margin: auto;
 
   margin-bottom: 90px;
-  font-family: GothamNarrow-Medium;
+  font-family: GothamNarrow, sans-serif;
 
 }
 
@@ -289,6 +330,7 @@ ngx-touch-keyboard {
     background-position: center;
   }
 
+  line-height: 1.5em;
   text-align: center;
   font-size: 1.2em;
   width: 80%;
@@ -296,19 +338,19 @@ ngx-touch-keyboard {
   margin: 0;
   margin-top: 60px;
   margin-bottom: 60px;
-  font-family: GothamNarrow-Medium;
+  font-family: GothamNarrow, sans-serif;
+  font-weight: 300;
 }
 
 .modal-footer {
   text-align: center;
   background: white;
-  width: 100%;
   padding: 20px 32px;
 
   p {
     font-size: 1.6em;
     text-transform: uppercase;
-    font-family: GothamNarrow-Medium;
+    font-family: GothamNarrow, sans-serif;
   }
 }
 

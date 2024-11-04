@@ -60,7 +60,7 @@ export class FormWizardContainer {
       this.teams = [];
 
       for (let i = 0; i < this.form.value.nbTeams; i++) {
-        this.teams.push({id: "équipe" + (i + 1), name: ""});
+        this.teams.push({id: "équipe " + (i + 1), name: ""});
       }
     }
   }
