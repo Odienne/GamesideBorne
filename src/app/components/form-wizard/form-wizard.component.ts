@@ -227,7 +227,7 @@ export class FormWizard extends CdkStepper {
 
   goBack() {
     if (this.selectedIndex === 0) {
-      window.location.href = "/lang-select";
+      window.location.href = "/";
     } else {
       this.previous();
     }

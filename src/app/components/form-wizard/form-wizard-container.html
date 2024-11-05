@@ -1,4 +1,4 @@
-<form-wizard [linear]="linearMode">
+<form-wizard (messageEvent)="receiveMessage($event)" [linear]="linearMode">
   <cdk-step>
     <div class="step-container animate__animated {{animationClass}}   ">
       <app-lang-selection></app-lang-selection>
