@@ -1,6 +1,6 @@
 <form-wizard (messageEvent)="receiveMessage($event)" [linear]="linearMode">
   <cdk-step>
-    <div class="step-container animate__animated {{animationClass}}   ">
+    <div class="step-container animate__animated {{firstAnimationClass}}">
       <app-lang-selection></app-lang-selection>
     </div>
   </cdk-step>
@@ -28,15 +28,15 @@
         <form [formGroup]="form" class="custom-form" (ngSubmit)="submitForm()">
 
           <div class="flex-container" *ngIf="nbTeams > 1">
-            <input class="custom-text-input" autofocus required type="text" formControlName="groupName"
+            <input class="custom-text-input"
+                   required type="text" formControlName="groupName"
                    placeholder="{{'group-name-placeholder' | translate}}"
                    ngxTouchKeyboard
                    ngxTouchKeyboardFullScreen
                    inputmode='text'
                    #touchKeyboard="ngxTouchKeyboard"
-                   (focus)="custopOpenKeyboard(touchKeyboard)"
+                   (focus)="customOpenKeyboard(touchKeyboard)"
                    (blur)="customCloseKeyboard(touchKeyboard)"
-                   (touchend)="customCloseKeyboard(touchKeyboard)"
             >
           </div>
 
@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <div class="modal" *ngIf="infoModalVisibility">
+    <div class="modal animate__animated animate__bounceInDown {{fadeOutModalClass}}" *ngIf="infoModalVisibility">
       <!-- Modal content -->
       <div class="modal-container">
         <div class="modal-content">
@@ -121,7 +121,7 @@
 
   <div *ngFor="let team of teams; index as i">
     <cdk-step [stepControl]="teamDetailsForm">
-      <div class="step-container animate__animated {{animationClass}}   ">
+      <div class="step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
         <div>
           <h1 class="step-title">{{"compose-your" | translate}} <span class="ft-gotham-black">{{ team.id }}</span></h1>
         </div>
@@ -156,8 +156,8 @@
                    ngxTouchKeyboardFullScreen
                    inputmode='text'
                    #touchKeyboard="ngxTouchKeyboard"
-                   (focus)="touchKeyboard.openPanel()"
-                   (blur)="touchKeyboard.closePanel()"
+                   (focus)="customOpenKeyboard(touchKeyboard)"
+                   (blur)="customCloseKeyboard(touchKeyboard)"
             >
             <input class="custom-text-input" type="email" formControlName="teamEmail"
                    placeholder="{{'team-email-placeholder' | translate}}"
@@ -166,8 +166,8 @@
                    ngxTouchKeyboardFullScreen
                    inputmode='email'
                    #touchKeyboard2="ngxTouchKeyboard"
-                   (focus)="touchKeyboard2.openPanel()"
-                   (blur)="touchKeyboard2.closePanel()"
+                   (focus)="customOpenKeyboard(touchKeyboard2)"
+                   (blur)="customCloseKeyboard(touchKeyboard2)"
             >
 
             <button class="valid-btn" cdkStepperNext [disabled]="teamDetailsForm.invalid">
@@ -191,13 +191,12 @@
         </button>
       </div>
 
-      <div class="modal" *ngIf="checkedModalVisibility">
+      <div class="modal animate__animated animate__bounceInDown {{fadeOutModalClass}}" *ngIf="checkedModalVisibility">
         <div class="modal-container">
           <div class="modal-content modal-green">
           <span (click)="toggleCheckedModal()">
           <img class="icon info" src="./assets/icons/close_modal.svg" alt="">
           </span>
-
             <div class="modal-header">
               <p class="modal-title m-b" [innerHTML]="teamIsReadyTranslation(team.id, teamDetailsForm.value.teamName)"></p>
 

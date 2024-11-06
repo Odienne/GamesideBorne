@@ -34,6 +34,8 @@ export class FormWizardContainer {
   linearMode: boolean = true;
   checkedModalVisibility: boolean = false;
   animationClass: string = "animate__slideInRight";
+  firstAnimationClass: string = "animate__fadeIn";
+  fadeOutModalClass: string = "";
 
   constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService) {
   }
@@ -77,6 +79,7 @@ export class FormWizardContainer {
     } else if ($event.name === "prev") {
       console.log("goind back")
       this.animationClass = "animate__slideInLeft";
+      this.firstAnimationClass = this.animationClass;
     } else if ($event.name === "next") {
       console.log("goind next")
       this.animationClass = "animate__slideInRight";
@@ -87,7 +90,6 @@ export class FormWizardContainer {
     if (this.teamDetailsForm.valid) {
       let index = this.teams.findIndex(team => team.id === id);
       this.teams[index].name = this.teamDetailsForm.value.teamName;
-
     }
   }
 
@@ -148,7 +150,16 @@ export class FormWizardContainer {
   }
 
   toggleInfoModal() {
-    this.infoModalVisibility = !this.infoModalVisibility;
+    //I want to let the animation class handle the visibility first
+    if (this.infoModalVisibility) {
+      this.fadeOutModalClass = "animate__bounceOutUp";
+      setTimeout(() => {
+        this.infoModalVisibility = !this.infoModalVisibility;
+        this.fadeOutModalClass = "";
+      }, 1000)
+    } else {
+      this.infoModalVisibility = !this.infoModalVisibility;
+    }
   }
 
   toggleCheckedModal() {
@@ -185,7 +196,7 @@ export class FormWizardContainer {
     return this.translate.instant('modal-text-information')
   }
 
-  custopOpenKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
+  customOpenKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
     this.isKeyboardOpen = !this.isKeyboardOpen;
     touchKeyboard.openPanel();
   }
@@ -207,6 +218,8 @@ export class FormWizardContainer {
 export class FormWizard extends CdkStepper {
   @Output() messageEvent = new EventEmitter<{ name: string, value: any }>();
   cancelModalVisibility: boolean = false;
+  hideAnimationClass : string = "";
+  fadeOutModalClass: string = "";
 
 
   override previous() {
@@ -238,6 +251,14 @@ export class FormWizard extends CdkStepper {
   }
 
   toggleCancelModal() {
-    this.cancelModalVisibility = !this.cancelModalVisibility;
+    this.fadeOutModalClass = "animate__bounceOutUp";
+    if (this.cancelModalVisibility) {
+      setTimeout(() => {
+        this.cancelModalVisibility = !this.cancelModalVisibility;
+        this.fadeOutModalClass = "";
+      }, 1000)
+    } else {
+      this.cancelModalVisibility = !this.cancelModalVisibility;
+    }
   }
 }

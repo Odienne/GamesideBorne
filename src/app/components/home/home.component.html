@@ -2,12 +2,25 @@
   <div class="overlay"></div>
   <img class="home-background" src="/assets/images/bg.jpg" alt="">
 
-  <div class="home-title-container">
+  <div class="home-title-container animate__animated animate__fadeIn">
     <img class="home-logo" src="/assets/images/logo.svg" alt="">
     <h1>Interface borne d'inscription</h1>
 
-    <div class="micro">
+
+    <div class="micro" (click)="start()">
       <img src="/assets/icons/touch.svg" alt="">
+
+      <div class="{{animationClass}} shadow-micro animate__animated animate__fadeIn">
+      </div>
     </div>
+
+  </div>
+  <div class="animation-container" *ngIf="showAnimation">
+    <ng-lottie
+      [options]="options"
+      width="300px"
+      height="300px"
+      (animationCreated)="animationCreated($event)"/>
   </div>
 </div>
+

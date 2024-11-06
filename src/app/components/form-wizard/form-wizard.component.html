@@ -10,8 +10,8 @@
       <img src="/assets/images/logo.svg" alt="logo">
     </div>
 
-    <div class="btn-container {{selectedIndex > 0 && selectedIndex +1 <steps.length ? 'next-container' : ''}}">
-      <button *ngIf="selectedIndex > 0 && selectedIndex +1 <steps.length" cdkStepperNext
+    <div class="btn-container next-container" style="{{selectedIndex > 0 && selectedIndex +1 <steps.length ? '' : 'opacity: 0'}}">
+      <button cdkStepperNext
               class="next-btn">
         <img src="./assets/icons/next.svg" alt="">
       </button>
@@ -24,7 +24,7 @@
     <img src="./assets/icons/cancel.svg" alt="">
   </button>
 
-  <div class="modal" *ngIf="cancelModalVisibility">
+  <div class="modal animate__animated animate__bounceInDown {{fadeOutModalClass}}" *ngIf="cancelModalVisibility">
     <!-- Modal content -->
     <div class="modal-container">
       <div class="modal-content">
@@ -46,4 +46,5 @@
       </div>
     </div>
   </div>
+
 </section>
