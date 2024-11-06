@@ -7,6 +7,8 @@ import { FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButtonModule} from "@angular/material/button";
+import {AnimationOptions, LottieComponent} from "ngx-lottie";
+import {AnimationItem} from "lottie-web";
 
 
 @Component({
@@ -18,7 +20,7 @@ import {MatButtonModule} from "@angular/material/button";
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule,],
+    MatInputModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -31,4 +33,5 @@ export class AppComponent {
     this.translate.setDefaultLang(this.defaultLang);
     this.translate.use(this.defaultLang);
   }
+
 }
