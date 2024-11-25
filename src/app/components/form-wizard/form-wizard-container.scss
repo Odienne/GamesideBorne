@@ -38,6 +38,10 @@
     font-weight: 300;
     margin-bottom: 40px;
     margin-top: 40px;
+
+    &.bold {
+      font-weight: bold;
+    }
   }
 }
 
@@ -101,8 +105,8 @@
       overflow: hidden;
 
       &.normal {
-        background-color: #b41f1f;
-        border: 6px solid #b41f1f;
+        background-color: #f7b002;
+        border: 6px solid #f7b002;
       }
 
       &.halloween {
@@ -164,7 +168,7 @@
   border-radius: 50%;
   height: 80px;
   width: 80px;
-  border: 2px solid #b41f1f;
+  border: 2px solid #f7b002;
 
   color: white;
   font-size: 2.2em;
@@ -185,9 +189,8 @@
   align-items: center;
 
   border-radius: 0;
-  height: 60px;
-  width: 80px;
-  border: 2px solid #b41f1f;
+  padding: 16px 24px;
+  border: 2px solid #f7b002;
 
   color: white;
   font-size: 1.2em;
@@ -204,10 +207,12 @@
   &:first-child {
     border-top-left-radius: 50%;
     border-bottom-left-radius: 50%;
+    padding-left: 14px; //inferior value to regular padding
   }
   &:last-child {
     border-top-right-radius: 50%;
     border-bottom-right-radius: 50%;
+    padding-right: 14px; //inferior value to regular padding
   }
 }
 
@@ -221,7 +226,7 @@
   border-radius: 50%;
   height: 90px;
   width: 90px;
-  border: 2px solid #b41f1f;
+  border: 2px solid #f7b002;
 
   color: white;
   font-size: 1.2em;
@@ -327,7 +332,7 @@
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    border: 3px solid #b41f1f;
+    border: 3px solid #f7b002;
     box-shadow: 10px 10px 20px 0 #00000066;
 
     .icon {
