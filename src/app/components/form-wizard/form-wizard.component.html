@@ -10,7 +10,8 @@
       <img src="/assets/images/logo.svg" alt="logo">
     </div>
 
-    <div class="btn-container next-container" style="{{selectedIndex > 0 && selectedIndex +1 <steps.length ? '' : 'opacity: 0'}}">
+    <div class="btn-container next-container"
+         >
       <button cdkStepperNext
               class="next-btn">
         <img src="./assets/icons/next.svg" alt="">
@@ -18,7 +19,7 @@
     </div>
   </header>
 
-  <div [ngTemplateOutlet]="selected ? selected.content : null"></div>
+  <div class="wizard-content-container" [ngTemplateOutlet]="selected ? selected.content : null"></div>
 
   <button class="cancel-btn" (click)="toggleCancelModal()">
     <img src="./assets/icons/cancel.svg" alt="">

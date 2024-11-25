@@ -1,14 +1,19 @@
 import {Component} from '@angular/core';
 import {AnimationOptions, LottieComponent} from "ngx-lottie";
 import {AnimationItem} from "lottie-web";
-import {NgIf} from "@angular/common";
+import {NgIf, NgOptimizedImage} from "@angular/common";
+import {TranslateModule} from "@ngx-translate/core";
+import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     LottieComponent,
-    NgIf
+    NgIf,
+    NgOptimizedImage,
+    TranslateModule,
+    LangSelectionComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -16,6 +21,8 @@ import {NgIf} from "@angular/common";
 export class HomeComponent {
   showAnimation = false;
   animationClass = "";
+
+
   protected start = () => {
     this.animationClass = "customFullScreenAnimation";
     this.showAnimation = true;
@@ -43,7 +50,6 @@ export class HomeComponent {
 
   play(): void {
     if (this.animationItem) {
-      console.log('hould play')
       this.animationItem.play();
     }
   }
