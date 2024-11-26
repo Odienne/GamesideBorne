@@ -24,19 +24,18 @@ import {ReservationService} from "../../services/reservation.service";
 export class FormWizardContainer {
   form!: FormGroup;
   teamDetailsForm!: FormGroup;
+  playerInfosForm!: FormGroup;
   nbTeams = 0;
   maxTeams = 10;
   isKeyboardOpen: boolean = false;
 
   teams: any[] = [{}]; // array of teams, used to iterate in template
-  playersToIterate: any[] = []; // fake array simply to iterate in ngFor template
   players: any[] = []; // contains player data such as age and gender, keyed by groupID and used to
   linearMode: boolean = false;
   checkedModalVisibility: boolean = false;
   animationClass: string = "animate__slideInRight";
   firstAnimationClass: string = "animate__fadeIn";
   fadeOutModalClass: string = "";
-  playerInfosForm!: FormGroup;
 
   constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService, private reservationService: ReservationService) {
   }
@@ -48,19 +47,16 @@ export class FormWizardContainer {
   ngOnInit() {
     this.form = this.fb.group({
       nbTeams: [this.nbTeams, [Validators.required, Validators.min(1), Validators.max(this.maxTeams)]],
-      groupName: [null],
+      groupName: [null, Validators.maxLength(50)],
     });
     this.teamDetailsForm = this.fb.group({
-      teamName: ["", [Validators.required, Validators.minLength(3)]],
-      teamEmail: ["", [Validators.required, Validators.email]],
+      teamName: ["", [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      teamEmail: ["", [Validators.required, Validators.email, Validators.maxLength(80)]],
       nbPlayer: [null, [Validators.required, Validators.min(2), Validators.max(5)]],
       playersInfos: []
     });
 
-    this.playerInfosForm = this.fb.group({
-      age: [],
-      gender: []
-    });
+    this.playerInfosForm = this.fb.group({});
   }
 
   /**
@@ -114,11 +110,12 @@ export class FormWizardContainer {
     if (this.nbTeams > 1) {
       this.form.controls['groupName'].setValidators([
         Validators.required,
-        Validators.minLength(3)
+        Validators.minLength(3),
+        Validators.maxLength(50)
       ]);
     } else if (this.nbTeams < 2) {
       this.form.controls['groupName'].setValidators([]);
-      this.form.controls['groupName'].setValue(null); // reset groupName 
+      this.form.controls['groupName'].setValue(null); // reset groupName
     }
     this.form.controls['groupName'].updateValueAndValidity();
   }
@@ -135,7 +132,7 @@ export class FormWizardContainer {
       this.teams = [];
 
       for (let i = 0; i < this.form.value.nbTeams; i++) {
-        this.teams.push({id: this.translate.instant("team") + (i + 1), name: ""});
+        this.teams.push({id: this.translate.instant("team") + " " + (i + 1), name: ""});
       }
     }
   }
@@ -152,12 +149,19 @@ export class FormWizardContainer {
       this.teams[index].nbPlayer = this.teamDetailsForm.value.nbPlayer;
 
 
-      //reset array (in case you go back i would push more and more players)
-      this.playersToIterate = [];
-      //it is necessary to iterate in the template, it will create a new step to gather info on each player
+      //reset array (in case you go back it would push more and more players)
+      this.teams[index].players = [];
+      //reset formControls of formGroup
+      this.playerInfosForm = this.fb.group({});
+
       for (let i = 0; i < this.teamDetailsForm.value.nbPlayer; i++) {
-        this.playersToIterate.push({});
+        this.teams[index].players.push({age: null, gender: null}); //to iterate on it in template
+
+        //also need to manually add a formControl for each player
+        this.playerInfosForm.addControl('ageplayer' + (i + 1), this.fb.control(null));
+        this.playerInfosForm.addControl('genderplayer' + (i + 1), this.fb.control(null));
       }
+      console.log(this.playerInfosForm)
       //and save playerInfos into teams global data
       // this.teams[index].playersInfos = this.players;
       // console.log(this.teams)
@@ -166,26 +170,15 @@ export class FormWizardContainer {
     }
   }
 
-  submitPlayerInfosForm(id: any) {
-    if (this.playerInfosForm.valid) {
-      console.log('player info submitted');
-      this.playerInfosForm.value.age = 6;
-      this.playerInfosForm.value.gender = "F";
-      //save it to players temp data
-      console.log(this.playerInfosForm.value)
-      this.players.push(this.playerInfosForm.value);
-      this.playerInfosForm.reset();
-    }
-  }
 
   /**
-   * Simply returns whether the teams have their attributed names and are complete
+   * Returns whether the teams have their attributed names and are complete
    */
   allTeamAreCompleted() {
     let allTeamAreCompleted = true;
 
     this.teams.forEach(team => {
-      if (team.name === "") {
+      if (team.name === "" || team.name === null) {
         allTeamAreCompleted = false;
       }
     })
@@ -195,6 +188,7 @@ export class FormWizardContainer {
 
 
   returnToStart() {
+    console.log('return to start')
     this.teamDetailsForm.reset();
     this.nbTeams = 0;
     this.teams = [];
@@ -204,31 +198,35 @@ export class FormWizardContainer {
   /**
    * The toggle function for the confirmation modal when team data is completed and badge is scanned, also appears when all teams are completed
    */
-  toggleCheckedModal() {
-    //prevent user from closing last modal, acts as a confirmation instead and sends data before returning to home screen
-    /*must only trigger if modal was shown once, and on cancel btn*/
-    if (this.checkedModalVisibility && this.allTeamAreCompleted()) {
-      //this is the final steps, there is no more data to fetch from user
-      this.sendDataIfAllTeamAreCompleted();
-      //close modal after 15 seconds
-      setTimeout(() => {
-        this.checkedModalVisibility = !this.checkedModalVisibility;
-      }, 15000)
+  async toggleCheckedModal() {
+    this.checkedModalVisibility = !this.checkedModalVisibility; //toggle modal
+
+
+    //We need to prevent user from closing the last modal
+    // it acts as a confirmation and sends data before returning to home screen
+    //only triggers once, we do not want to resend data
+    if (this.checkedModalVisibility && this.allTeamAreCompleted()) { //meaning the last team is completed
+      let res = await this.sendData();
+      if (res === true) {
+        //close modal after 15 seconds (unless user clicks on it again
+        setTimeout(() => {
+          this.returnToStart();
+        }, 15000)
+      } else {
+        alert("could not save data")
+      }
+    } else if (!this.checkedModalVisibility && this.allTeamAreCompleted()) { //if user press check or cancel
+      this.returnToStart();
     }
-    this.checkedModalVisibility = !this.checkedModalVisibility;
   }
 
   /**
    * When all teams are completed, data is sent to backend to create teams, groups, etc.
    */
-  sendDataIfAllTeamAreCompleted() {
-    if (this.allTeamAreCompleted()) {
-      //todo send data to backend hello.php
-      console.log('send data to backend');
-      //this.reservationService.createTeams({});
-      //then, returns to home screen
-      this.returnToStart();
-    }
+  async sendData() {
+    //this.reservationService.createTeams({});
+    //then, returns to home screen
+    return true;
   }
 
 
@@ -263,6 +261,16 @@ export class FormWizardContainer {
       return control?.errors;
     }
     return null;
+  }
+
+  submitPlayerInfosForm() {
+    if (this.playerInfosForm.valid) {
+      this.playerInfosForm.reset();
+    }
+  }
+
+  getPlayerInfosFormValue(formControlName: string, playerId: number) {
+    return this.playerInfosForm.value[formControlName + playerId];
   }
 }
 

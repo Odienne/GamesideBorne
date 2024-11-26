@@ -45,6 +45,8 @@ $GamesideBorne-theme: mat.define-theme((
 
 html, body {
   overflow: hidden;
+  touch-action: none; //prevent pitching, zooming and such
+  -webkit-tap-highlight-color: transparent; /* remove tap highlight */
 }
 
 @font-face {
@@ -113,6 +115,7 @@ html, body {
 .valid-btn {
   margin-top: 90px;
   padding: 24px 120px;
+  width: 300px;
   font-size: 1.8em;
   border: none;
   text-transform: uppercase;
@@ -123,7 +126,19 @@ html, body {
   font-weight: normal;
   color: #141a26;
 
-  transition: background 0.3s linear;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-position: center;
+  transition: background 0.8s;
+
+  /* Ripple effect */
+  &:active {
+    background-color: #85D659;
+    background-size: 100%;
+    transition: background 0s;
+  }
 
   &.no-margin {
     margin-top: 0;
@@ -131,11 +146,23 @@ html, body {
 
   &.white-btn {
     background: white;
+
+    &:active {
+      background-color: rgba(234, 234, 234, 0.6);
+      background-size: 100%;
+      transition: background 0s;
+    }
   }
 
   &:disabled {
     background: #141a26;
     color: #2f3347;
+
+    &:active {
+      background-color: rgba(20, 26, 38, 0.6);
+      background-size: 100%;
+      transition: background 0s;
+    }
   }
 }
 
@@ -187,20 +214,25 @@ html, body {
 }
 
 :root {
-  --tk-color-text: #ffffff !important;
-  --tk-background: rgba(255, 255, 255, 0.1) !important;
+  --tk-color-text: #141a26 !important;
+  --tk-background: rgba(255, 255, 255, 0) !important;
   --tk-background-button: rgba(255, 255, 255, 0.2) !important;
   --tk-background-button-fn: rgba(255, 255, 255, 0.2) !important;
   --tk-background-button-active: rgba(255, 255, 255, 0.6) !important;
 }
 
 .touch-keyboard {
-  padding: 2rem 3rem;
+  padding: 2rem;
   background-image: linear-gradient(to right, #ff9966, #ff5e62);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5.5px);
   -webkit-backdrop-filter: blur(5.5px);
+
+  height: 100%;
+  width: 100%;
+  max-width: 100% !important;
+  margin-bottom: 6rem;
 }
 
 .touch-keyboard-key {
@@ -210,9 +242,15 @@ html, body {
 }
 
 ngx-touch-keyboard {
-  padding: 1rem !important;
+  padding: 2rem 1rem !important;
 }
 
+.touch-keyboard .touch-keyboard-row {
+  height: 22%;
+}
+.touch-keyboard .touch-keyboard-key {
+  font-size: 21px !important;
+}
 
 .cancel-btn {
   position: absolute;
@@ -266,8 +304,8 @@ ngx-touch-keyboard {
 }
 
 .modal-container {
-  margin: 15% auto;
-  width: 60%;
+  margin: 30% auto;
+  width: 80%;
   border-radius: 32px;
 
   display: flex;
@@ -279,7 +317,7 @@ ngx-touch-keyboard {
 
   .info {
     position: absolute;
-    left: 30px;
+    right: 30px;
     top: -8px;
     width: 60px;
     cursor: pointer;
@@ -292,6 +330,7 @@ ngx-touch-keyboard {
   .modal-content {
     width: 100%;
     overflow: hidden;
+    padding: 32px;
     border-radius: 32px;
     background: linear-gradient(90deg, #b41f1f, #e30613);
 
@@ -528,6 +567,8 @@ header {
   }
 }
 
+
+
 //forms
 form .ng-invalid.ng-touched {
   border-bottom: 2px solid rgba(255, 103, 103, 0.73) !important;
@@ -548,3 +589,4 @@ form .ng-invalid.ng-touched {
 .flex-justify-center {
   justify-content: center;
 }
+

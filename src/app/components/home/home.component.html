@@ -1,6 +1,6 @@
 <div class="home">
   <div class="overlay"></div>
-  <img class="home-background" ngSrc="/assets/images/bg.jpg" priority alt="" height="693" width="1040">
+  <img class="home-background current-bg" ngSrc="{{currentBackgroundImage}}" priority alt="" height="693" width="1040">
 
   <div class="home-title-container animate__animated animate__fadeIn">
     <img class="home-logo" ngSrc="/assets/images/new_logo.svg" priority alt="" height="16" width="16">
@@ -16,8 +16,8 @@
   <div class="animation-container" *ngIf="showAnimation">
     <ng-lottie
       [options]="options"
-      width="300px"
-      height="300px"
+      width="500px"
+      height="500px"
       (animationCreated)="animationCreated($event)"/>
   </div>
 </div>

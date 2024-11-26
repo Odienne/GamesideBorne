@@ -22,6 +22,24 @@ export class HomeComponent {
   showAnimation = false;
   animationClass = "";
 
+  backgrounds: string[] = [
+    "/assets/images/bgs/1.png",
+    "/assets/images/bgs/2.png",
+    "/assets/images/bgs/3.png",
+    "/assets/images/bgs/4.png",
+  ];
+  currentBackgroundIndex: number = 0;
+  currentBackgroundImage: string = this.backgrounds[this.currentBackgroundIndex];
+
+  ngOnInit() {
+    setInterval(() => {
+      this.currentBackgroundImage = this.backgrounds[this.getNextBackgroundIndex()];
+    }, 10000);
+  }
+  getNextBackgroundIndex() {
+    this.currentBackgroundIndex = (this.currentBackgroundIndex + 1) % this.backgrounds.length;
+    return this.currentBackgroundIndex;
+  }
 
   protected start = () => {
     this.animationClass = "customFullScreenAnimation";
