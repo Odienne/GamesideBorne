@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Output} from '@a
 import {CdkStepper, CdkStepperModule} from '@angular/cdk/stepper';
 import {NgForOf, NgIf, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgxTouchKeyboardDirective, NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
 import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
 import {MatStep, MatStepperModule} from "@angular/material/stepper";
@@ -118,6 +118,7 @@ export class FormWizardContainer {
       ]);
     } else if (this.nbTeams < 2) {
       this.form.controls['groupName'].setValidators([]);
+      this.form.controls['groupName'].setValue(null); // reset groupName 
     }
     this.form.controls['groupName'].updateValueAndValidity();
   }
@@ -134,7 +135,7 @@ export class FormWizardContainer {
       this.teams = [];
 
       for (let i = 0; i < this.form.value.nbTeams; i++) {
-        this.teams.push({id: "team" + (i + 1), name: ""});
+        this.teams.push({id: this.translate.instant("team") + (i + 1), name: ""});
       }
     }
   }
@@ -151,6 +152,8 @@ export class FormWizardContainer {
       this.teams[index].nbPlayer = this.teamDetailsForm.value.nbPlayer;
 
 
+      //reset array (in case you go back i would push more and more players)
+      this.playersToIterate = [];
       //it is necessary to iterate in the template, it will create a new step to gather info on each player
       for (let i = 0; i < this.teamDetailsForm.value.nbPlayer; i++) {
         this.playersToIterate.push({});
@@ -241,23 +244,25 @@ export class FormWizardContainer {
     })
   }
 
-  customOpenKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
+  /**
+   * custom toggle keyboard function because i need to manage a state to triger animations
+   * @param touchKeyboard
+   */
+  customToggleKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
     this.isKeyboardOpen = !this.isKeyboardOpen;
-    touchKeyboard.openPanel();
+    this.isKeyboardOpen ? touchKeyboard.openPanel() : touchKeyboard.closePanel();
   }
 
-  customCloseKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
-    this.isKeyboardOpen = !this.isKeyboardOpen;
-    touchKeyboard.closePanel();
-  }
-
-  validationErrorGroupName() {
-    let groupNameControl = this.form.get('groupName');
-    return !this.form.valid && (groupNameControl?.dirty && groupNameControl?.touched && groupNameControl?.errors?.['minlength']);
-  }
-  validationErrorTeamName() {
-    let teamNameControl = this.teamDetailsForm.get('teamName');
-    return !this.teamDetailsForm.valid && (teamNameControl?.dirty && teamNameControl?.touched && teamNameControl?.errors?.['minlength']);
+  /**
+   * Returns errors array of a formControl, used in template to display errors
+   * @param control
+   */
+  formErrors(control: any) {
+    //only returns error if the user has interacted and left the field at least once
+    if (control?.touched) {
+      return control?.errors;
+    }
+    return null;
   }
 }
 

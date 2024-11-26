@@ -2,7 +2,7 @@
   <cdk-step [stepControl]="form">
     <form [formGroup]="form" (ngSubmit)="submitForm()"
           class="custom-form step-container
-      animate__animated {{ animationClass }} {{ isKeyboardOpen ? 'animated-padding-for-keyboard' : '' }}">
+      animate__animated {{ firstAnimationClass }} {{ isKeyboardOpen ? 'animated-padding-for-keyboard' : '' }}">
 
       <div class="step-content">
         <h1 class="step-title">{{ "nb-team-in-group-title" | translate }}</h1>
@@ -34,15 +34,17 @@
                  ngxTouchKeyboardFullScreen
                  inputmode='text'
                  #touchKeyboard="ngxTouchKeyboard"
-                 (focus)="customOpenKeyboard(touchKeyboard)"
-                 (blur)="customCloseKeyboard(touchKeyboard)"
+                 (focus)="customToggleKeyboard(touchKeyboard)"
+                 (blur)="customToggleKeyboard(touchKeyboard)"
           >
 
-          <!--errors display-->
-          <div class="input-error {{validationErrorGroupName() ? 'animate__animated animate__headShake' : ''}}"
-               *ngIf="validationErrorGroupName()">
-            <p class="error-text">
-              Group name should be at least 3 characters.
+          <!--errors display for group name-->
+          <div class="input-error animate__animated animate__headShake">
+            <p *ngIf="formErrors(form.get('groupName'))?.minlength" class="error-text">
+              Your group name should be at least 3 characters.
+            </p>
+            <p *ngIf="formErrors(form.get('groupName'))?.required" class="error-text">
+              Please enter your group name.
             </p>
           </div>
         </div>
@@ -95,6 +97,12 @@
             <input id="nbPlayer4" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="4">
             <input id="nbPlayer5" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="5">
 
+            <!--errors display for nb players-->
+            <div class="input-error animate__animated animate__headShake">
+              <p *ngIf="formErrors(teamDetailsForm.get('nbPlayer'))?.required" class="error-text">
+                Please select the number of players in your team.
+              </p>
+            </div>
 
             <input class="custom-text-input" type="text" formControlName="teamName"
                    placeholder="{{'team-name-placeholder' | translate}}"
@@ -103,19 +111,17 @@
                    ngxTouchKeyboardFullScreen
                    inputmode='text'
                    #touchKeyboard="ngxTouchKeyboard"
-                   (focus)="customOpenKeyboard(touchKeyboard)"
-                   (blur)="customCloseKeyboard(touchKeyboard)"
+                   (focus)="customToggleKeyboard(touchKeyboard)"
+                   (blur)="customToggleKeyboard(touchKeyboard)"
             >
 
-            <!--errors display-->
-            <div class="input-error" *ngIf="validationErrorTeamName()">
-              <p>
-                Team name should be at least 3 characters.
+            <!--errors display for team name-->
+            <div class="input-error animate__animated animate__headShake">
+              <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.minlength" class="error-text">
+                Your team name should be at least 3 characters.
               </p>
-            </div>
-            <div class="input-error" *ngIf="validationErrorTeamName()">
-              <p>
-                Votre email ne semble pas être valide.
+              <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.required" class="error-text">
+                Please enter your team name.
               </p>
             </div>
 
@@ -126,9 +132,19 @@
                    ngxTouchKeyboardFullScreen
                    inputmode='email'
                    #touchKeyboard2="ngxTouchKeyboard"
-                   (focus)="customOpenKeyboard(touchKeyboard2)"
-                   (blur)="customCloseKeyboard(touchKeyboard2)"
+                   (focus)="customToggleKeyboard(touchKeyboard2)"
+                   (blur)="customToggleKeyboard(touchKeyboard2)"
             >
+
+            <!--errors display for team email-->
+            <div class="input-error animate__animated animate__headShake">
+              <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.email" class="error-text">
+                Your team email is invalid.
+              </p>
+              <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.required" class="error-text">
+                Please enter your team email to receive your score sheet.
+              </p>
+            </div>
           </div>
         </div>
 
