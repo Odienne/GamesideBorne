@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {CdkStepperNext} from "@angular/cdk/stepper";
@@ -22,7 +22,9 @@ export class LangSelectionComponent {
     "es",
   ];
 
-  selected = localStorage.getItem("lang") || "";
+  @Input() onSubmit!: any;
+
+  selected = "";
 
   constructor(private translateService: TranslateService) {
   }
@@ -32,9 +34,5 @@ export class LangSelectionComponent {
     localStorage.setItem("lang", locale);
     this.translateService.use(locale);
     this.translateService.setDefaultLang(locale);
-  }
-
-  goToFormWizard() {
-    window.location.href = "/form-wizard";
   }
 }

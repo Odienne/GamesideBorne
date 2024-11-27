@@ -2,12 +2,12 @@
   <div class="lang-selection__content">
     <div class="lang-selector-container">
       <div class="select-locale" *ngFor="let locale of locales" (click)="selectLocale(locale)">
-        <img class="locale-flag {{ selected === locale ? 'active' : '' }}" src="/assets/images/flags/{{ locale }}.png"
+        <img class="locale-flag {{ selected === locale ? 'active' : selected != '' ? 'not-selected' : '' }}" src="/assets/images/flags/{{ locale }}.png"
              alt="">
       </div>
     </div>
     <div>
-      <button cdkStepperNext [disabled]="selected === ''" class="valid-btn">
+      <button (click)="onSubmit()" [disabled]="selected === ''" class="valid-btn">
         {{ "valid-btn" | translate }}
       </button>
     </div>

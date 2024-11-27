@@ -1,6 +1,6 @@
 .container {
   width: 100%;
-  height: 100vh;
+  min-height: 100%;
   background: rgb(47, 51, 71);
 }
 
@@ -29,19 +29,6 @@
   color: inherit;
 }
 
-.btn-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 100px;
-  height: 100%;
-
-  img {
-    width: 26px;
-  }
-}
-
 .back-container {
   border-right: 7px solid rgb(47, 51, 71);
 }
@@ -49,22 +36,3 @@
 .next-container {
   border-left: 7px solid rgb(47, 51, 71);
 }
-
-.back-btn {
-  background: none;
-  outline: 0;
-  border: 0;
-  cursor: pointer;
-  position: relative;
-  right: 6px;
-}
-
-.next-btn {
-  background: none;
-  outline: 0;
-  border: 0;
-  cursor: pointer;
-  position: relative;
-  left: 6px;
-}
-

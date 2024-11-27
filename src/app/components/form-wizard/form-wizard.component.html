@@ -7,10 +7,10 @@
     </div>
 
     <div class="logo">
-      <img src="/assets/images/logo.svg" alt="logo">
+      <img src="/assets/images/new_logo.svg" alt="logo">
     </div>
 
-    <div class="btn-container next-container" style="{{selectedIndex > 0 && selectedIndex +1 <steps.length ? '' : 'opacity: 0'}}">
+    <div class="btn-container next-container">
       <button cdkStepperNext
               class="next-btn">
         <img src="./assets/icons/next.svg" alt="">
@@ -18,17 +18,17 @@
     </div>
   </header>
 
-  <div [ngTemplateOutlet]="selected ? selected.content : null"></div>
+  <div class="wizard-content-container" [ngTemplateOutlet]="selected ? selected.content : null"></div>
 
   <button class="cancel-btn" (click)="toggleCancelModal()">
     <img src="./assets/icons/cancel.svg" alt="">
   </button>
 
-  <div class="modal animate__animated animate__bounceInDown {{fadeOutModalClass}}" *ngIf="cancelModalVisibility">
+  <div class="modal" *ngIf="cancelModalVisibility">
     <!-- Modal content -->
-    <div class="modal-container">
+    <div class="modal-container animate__animated animate__bounceInDown {{fadeOutModalClass}}">
       <div class="modal-content">
-          <span (click)="toggleCancelModal()">
+        <span (click)="toggleCancelModal()">
           <img class="icon info" src="./assets/icons/close_modal.svg" alt="">
         </span>
 

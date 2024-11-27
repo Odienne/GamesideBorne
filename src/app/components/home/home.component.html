@@ -1,25 +1,23 @@
 <div class="home">
   <div class="overlay"></div>
-  <img class="home-background" src="/assets/images/bg.jpg" alt="">
+  <img class="home-background current-bg" ngSrc="{{currentBackgroundImage}}" priority alt="" height="693" width="1040">
 
   <div class="home-title-container animate__animated animate__fadeIn">
-    <img class="home-logo" src="/assets/images/logo.svg" alt="">
-    <h1>Interface borne d'inscription</h1>
+    <img class="home-logo" ngSrc="/assets/images/new_logo.svg" priority alt="" height="16" width="16">
+    <h1>{{ "home-text" | translate }}</h1>
 
 
-    <div class="micro" (click)="start()">
-      <img src="/assets/icons/touch.svg" alt="">
-
-      <div class="{{animationClass}} shadow-micro animate__animated animate__fadeIn">
-      </div>
+    <div class="animate__animated animate__fadeIn p-relative">
+      <app-lang-selection [onSubmit]="start"></app-lang-selection>
+        <div class="{{animationClass}} shadow-micro animate__animated animate__fadeIn">
+        </div>
     </div>
-
   </div>
   <div class="animation-container" *ngIf="showAnimation">
     <ng-lottie
       [options]="options"
-      width="300px"
-      height="300px"
+      width="500px"
+      height="500px"
       (animationCreated)="animationCreated($event)"/>
   </div>
 </div>

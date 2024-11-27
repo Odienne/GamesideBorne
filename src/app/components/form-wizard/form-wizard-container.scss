@@ -1,36 +1,72 @@
-.step-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
 
-  padding: 3rem;
+:host, cdk-step {
+  height: 100%;
+}
+
+.step-container {
+  height: calc(100vh - 120px);
+  display: grid;
+  grid-template-areas:
+  "content"
+  "validation";
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr;
+
+  .step-content {
+    grid-area: content;
+  }
 
   .step-title {
+
     text-align: center;
     font-size: 2.2em;
     text-transform: uppercase;
     color: #ffffff;
-    margin: 0;
-    margin-top: 30px;
+    max-width: 80%;
+    margin: 60px auto;
     font-family: GothamNarrow;
   }
 
   .step-subtitle {
+    text-align: center;
     font-style: italic;
     color: white;
     font-size: 1.6em;
     font-family: GothamNarrow;
     font-style: italic;
     font-weight: 300;
-    margin-bottom: 32px;
-    margin-top: 32px;
+    margin-bottom: 40px;
+    margin-top: 40px;
+
+    &.bold {
+      font-weight: bold;
+    }
+    &.bigger {
+      font-size: 1.8em;
+    }
   }
+}
+
+.error-text {
+  text-align: center;
+  font-style: italic;
+  color: white;
+  font-size: 1.2em;
+  font-family: GothamNarrow;
+  font-style: italic;
+  font-weight: 300;
+}
+
+.validation-container {
+  grid-area: validation;
+  display: flex;
+  margin: auto;
 }
 
 .label-container {
   margin-bottom: 32px;
 }
+
 
 .gamemode-container {
   display: flex;
@@ -71,8 +107,8 @@
       overflow: hidden;
 
       &.normal {
-        background-color: #b41f1f;
-        border: 6px solid #b41f1f;
+        background-color: #f7b002;
+        border: 6px solid #f7b002;
       }
 
       &.halloween {
@@ -111,6 +147,7 @@
 
     &.selected {
       box-shadow: 20px 20px 20px 0 #00000066;
+
       .card-footer {
 
         .card-footer-title {
@@ -133,25 +170,145 @@
   border-radius: 50%;
   height: 80px;
   width: 80px;
-  border: 2px solid #b41f1f;
+  border: 2px solid #f7b002;
 
   color: white;
   font-size: 2.2em;
   font-family: GothamNarrow, sans-serif;
   font-weight: bold;
   cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
 
   &.selected {
     color: black;
     border-color: #72b74d;
     background: #72b74d;
+    box-shadow: 10px 10px 20px 0 #00000066;
+    animation: scale-bounce 0.3s ease-in-out;
+  }
+
+  &.not-selected {
+    filter: grayscale(0.8);
+  }
+}
+
+.player-age-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 0;
+  padding: 16px 24px;
+  border: 2px solid #f7b002;
+
+  color: white;
+  font-size: 1.2em;
+  font-family: GothamNarrow, sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &.selected {
+    color: black;
+    border-color: #72b74d;
+    background: #72b74d;
+
+    box-shadow: 10px 10px 20px 0 #00000066;
+    animation: scale-bounce 0.3s ease-in-out;
+  }
+
+  &.not-selected {
+    filter: grayscale(0.8);
+  }
+
+  &:first-child {
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    padding: 16px 18px;
+  }
+
+  &:last-child {
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+    padding: 16px 18px;
+  }
+}
+
+.player-gender-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 16px;
+
+  border-radius: 50%;
+  height: 90px;
+  width: 90px;
+  border: 2px solid #f7b002;
+
+  color: white;
+  font-size: 1.2em;
+  font-family: GothamNarrow, sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  & svg {
+    fill: white;
+  }
+
+  &.selected {
+    color: black;
+    border-color: #72b74d;
+    background: #72b74d;
+    box-shadow: 10px 10px 20px 0 #00000066;
+    animation: scale-bounce 0.3s ease-in-out;
+
+    & svg {
+      fill: black;
+    }
+  }
+
+  &.not-selected {
+    filter: grayscale(0.8);
+  }
+}
+
+.players-infos-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+
+  .player-infos {
+    width: 45%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .label-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 4px;
+  }
+
+  .gender-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 16px;
   }
 }
 
 
-
-
 .custom-text-input {
+  animation-name: fadeInDown;
+  display: block;
   width: 75%;
   height: 100%;
   background: transparent;
@@ -164,7 +321,8 @@
   border-bottom: 2px solid grey;
   text-transform: uppercase;
   outline: none;
-  margin-top: 16px;
+  margin-top: 32px;
+  margin-bottom: 32px;
 
   &::placeholder {
     text-transform: none;
@@ -182,10 +340,16 @@
   gap: 80px;
 
   .nbTeams-value {
+    display: inline-block;
+    text-align: center;
+    width: 100px;
     font-size: 5em;
     color: white;
     font-family: GothamNarrow, sans-serif;
     font-weight: bold;
+  }
+
+  .btn-update-nbTeams {
   }
 
   button {
@@ -195,11 +359,18 @@
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    border: 3px solid #b41f1f;
+    border: 3px solid #f7b002;
     box-shadow: 10px 10px 20px 0 #00000066;
+    transition: transform 0.3s, border 0.3s, box-shadow 0.3s;
 
     .icon {
       width: 60px;
+    }
+
+    &:active {
+      border-color: #f78d02;
+      box-shadow: none;
+      transform: scale(0.9);
     }
   }
 }
@@ -211,6 +382,7 @@
   overflow: hidden;
   position: absolute;
 }
+
 .ribbon::before,
 .ribbon::after {
   position: absolute;
@@ -219,13 +391,14 @@
   display: block;
   border: 5px solid #ef7d00;
 }
+
 .ribbon span {
   position: absolute;
   display: block;
   width: 225px;
   padding: 15px 0;
   background: linear-gradient(0deg, #ffe500, #ef7d00);
-  box-shadow: 0 5px 10px rgba(0,0,0,.1);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, .1);
   color: #000000;
   font-family: GothamNarrow, sans-serif;
   font-weight: 900;
@@ -240,19 +413,23 @@
   top: -10px;
   right: -10px;
 }
+
 .ribbon-top-right::before,
 .ribbon-top-right::after {
   border-top-color: transparent;
   border-right-color: transparent;
 }
+
 .ribbon-top-right::before {
   top: 0;
   left: 0;
 }
+
 .ribbon-top-right::after {
   bottom: 0;
   right: 0;
 }
+
 .ribbon-top-right span {
   left: -25px;
   top: 30px;

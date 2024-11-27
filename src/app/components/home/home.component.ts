@@ -1,14 +1,19 @@
 import {Component} from '@angular/core';
 import {AnimationOptions, LottieComponent} from "ngx-lottie";
 import {AnimationItem} from "lottie-web";
-import {NgIf} from "@angular/common";
+import {NgIf, NgOptimizedImage} from "@angular/common";
+import {TranslateModule} from "@ngx-translate/core";
+import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     LottieComponent,
-    NgIf
+    NgIf,
+    NgOptimizedImage,
+    TranslateModule,
+    LangSelectionComponent
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -16,6 +21,26 @@ import {NgIf} from "@angular/common";
 export class HomeComponent {
   showAnimation = false;
   animationClass = "";
+
+  backgrounds: string[] = [
+    "/assets/images/bgs/1.png",
+    "/assets/images/bgs/2.png",
+    "/assets/images/bgs/3.png",
+    "/assets/images/bgs/4.png",
+  ];
+  currentBackgroundIndex: number = 0;
+  currentBackgroundImage: string = this.backgrounds[this.currentBackgroundIndex];
+
+  ngOnInit() {
+    setInterval(() => {
+      this.currentBackgroundImage = this.backgrounds[this.getNextBackgroundIndex()];
+    }, 10000);
+  }
+  getNextBackgroundIndex() {
+    this.currentBackgroundIndex = (this.currentBackgroundIndex + 1) % this.backgrounds.length;
+    return this.currentBackgroundIndex;
+  }
+
   protected start = () => {
     this.animationClass = "customFullScreenAnimation";
     this.showAnimation = true;
@@ -43,7 +68,6 @@ export class HomeComponent {
 
   play(): void {
     if (this.animationItem) {
-      console.log('hould play')
       this.animationItem.play();
     }
   }

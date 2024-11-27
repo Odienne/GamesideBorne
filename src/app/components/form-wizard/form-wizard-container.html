@@ -1,153 +1,114 @@
 <form-wizard (messageEvent)="receiveMessage($event)" [linear]="linearMode">
-  <cdk-step>
-    <div class="step-container animate__animated {{firstAnimationClass}}">
-      <app-lang-selection></app-lang-selection>
-    </div>
-  </cdk-step>
   <cdk-step [stepControl]="form">
-    <div class="step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
-      <div>
+    <form [formGroup]="form" (ngSubmit)="submitForm()"
+          class="custom-form step-container
+      animate__animated {{ firstAnimationClass }} {{ isKeyboardOpen ? 'animated-padding-for-keyboard' : '' }}">
+
+      <div class="step-content" style="height: 580px">
         <h1 class="step-title">{{ "nb-team-in-group-title" | translate }}</h1>
-      </div>
 
-      <div class="manage-nbTeams-container">
-        <button (click)="minusOneTeam()">
-          <img class="icon minus" src="./assets/icons/minus.svg" alt="">
-        </button>
-        <div>
-          <span class="nbTeams-value">
-            {{ nbTeams }}
-          </span>
+        <div class="manage-nbTeams-container">
+          <div class="btn-update-nbTeams">
+            <button (click)="minusOneTeam()">
+              <img class="icon minus" ngSrc="./assets/icons/minus.svg" width="60" height="60" alt="">
+            </button>
+          </div>
+          <div>
+            <span class="nbTeams-value animate__animated {{nbTeamsAnimationClass}}">
+              {{ nbTeams }}
+            </span>
+          </div>
+          <div class="btn-update-nbTeams">
+            <button (click)="addOneTeam()">
+              <img class="icon plus" ngSrc="./assets/icons/plus.svg" width="60" height="60" alt="">
+            </button>
+          </div>
         </div>
-        <button (click)="addOneTeam()">
-          <img class="icon plus" src="./assets/icons/plus.svg" alt="">
-        </button>
-      </div>
 
-      <div class="flex-container">
-        <form [formGroup]="form" class="custom-form" (ngSubmit)="submitForm()">
+        <div class="flex-container animate__animated" *ngIf="nbTeams > 1">
+          <input class="custom-text-input animate__animated"
+                 required type="text" formControlName="groupName"
+                 placeholder="{{'group-name-placeholder' | translate}}"
+                 ngxTouchKeyboard
+                 ngxTouchKeyboardFullScreen
+                 inputmode='text'
+                 #touchKeyboard="ngxTouchKeyboard"
+                 (focus)="customToggleKeyboard(touchKeyboard)"
+                 (blur)="customToggleKeyboard(touchKeyboard)"
+          >
 
-          <div class="flex-container" *ngIf="nbTeams > 1">
-            <input class="custom-text-input"
-                   required type="text" formControlName="groupName"
-                   placeholder="{{'group-name-placeholder' | translate}}"
-                   ngxTouchKeyboard
-                   ngxTouchKeyboardFullScreen
-                   inputmode='text'
-                   #touchKeyboard="ngxTouchKeyboard"
-                   (focus)="customOpenKeyboard(touchKeyboard)"
-                   (blur)="customCloseKeyboard(touchKeyboard)"
-            >
-          </div>
-
-          <button class="valid-btn" cdkStepperNext [disabled]="!this.form.valid">
-            {{ "valid-btn" | translate }}
-          </button>
-        </form>
-      </div>
-    </div>
-  </cdk-step>
-  <cdk-step [stepControl]="gameModeForm">
-    <div class="step-container animate__animated {{animationClass}}   ">
-      <div>
-        <h1 class="step-title">{{ "choose-gamemode-title" | translate }}</h1>
-      </div>
-
-      <div class="flex-container">
-        <form [formGroup]="gameModeForm" class="custom-form">
-
-          <div class="gamemode-container">
-            <label class="gamemode {{gameModeForm.value.gamemode === 'classique' ? 'selected' : ''}}" for="gamemode1">
-
-              <span (click)="toggleInfoModal()">
-                <img class="icon info" src="./assets/icons/information.svg" alt="">
-              </span>
-
-              <div class="card-header normal">
-                <img src="/assets/icons/man.svg" alt="" class="center-icon">
-              </div>
-              <div class="card-footer">
-                <p class="card-footer-title">{{ "classic-gamemode-title" | translate }}</p>
-              </div>
-            </label>
-
-            <label class="gamemode {{gameModeForm.value.gamemode === 'halloween' ? 'selected' : ''}}">
-              <span (click)="toggleInfoModal()">
-                <img class="icon info" src="./assets/icons/information.svg" alt="">
-              </span>
-
-              <div class="card-header halloween">
-                <img src="/assets/icons/ghost.svg" alt="" class="center-icon">
-                <div class="ribbon ribbon-top-right"><span>{{ "coming-soon" | translate }}</span></div>
-              </div>
-              <div class="card-footer">
-                <p class="card-footer-title edoSZ">{{ "halloween-gamemode-title" | translate }}</p>
-              </div>
-            </label>
-          </div>
-
-          <input id="gamemode1" hidden name="gamemode" formControlName="gamemode" type="radio" value="classique">
-          <input id="gamemode2" hidden name="gamemode" formControlName="gamemode" type="radio" value="halloween">
-
-          <button class="valid-btn" cdkStepperNext [disabled]="gameModeForm.invalid">
-            {{ "valid-btn" | translate }}
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <div class="modal animate__animated animate__bounceInDown {{fadeOutModalClass}}" *ngIf="infoModalVisibility">
-      <!-- Modal content -->
-      <div class="modal-container">
-        <div class="modal-content">
-          <span (click)="toggleInfoModal()">
-          <img class="icon info" src="./assets/icons/close_modal.svg" alt="">
-        </span>
-
-          <div class="modal-header with-bg">
-            <p class="modal-text" [innerHTML]="translateModalTextInformation()">
-
+          <!--errors display for group name-->
+          <div class="input-error">
+            <p *ngIf="formErrors(form.get('groupName'))?.minlength"
+               class="error-text animate__animated animate__headShake">
+              {{ 'group-name-length-error' | translate }}
             </p>
-          </div>
-          <div class="modal-footer">
-            <p>
-              {{ "classic-gamemode-title" | translate }}
+            <p *ngIf="formErrors(form.get('groupName'))?.required"
+               class="error-text animate__animated animate__headShake">
+              {{ "group-name-required-error" | translate }}
             </p>
           </div>
         </div>
       </div>
-    </div>
+
+      <div class="validation-container">
+        <button class="valid-btn" cdkStepperNext [disabled]="!this.form.valid">
+          {{ "valid-btn" | translate }}
+        </button>
+      </div>
+    </form>
   </cdk-step>
 
+  <!--  choose nbPlayers for each team + teamName and email-->
   <div *ngFor="let team of teams; index as i">
     <cdk-step [stepControl]="teamDetailsForm">
-      <div class="step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
-        <div>
-          <h1 class="step-title">{{"compose-your" | translate}} <span class="ft-gotham-black">{{ team.id }}</span></h1>
-        </div>
+      <form
+        [formGroup]="teamDetailsForm" (ngSubmit)="submitTeamDetailsForm(team.id)"
+        class="custom-form step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
+        <div class="step-content">
+          <h1 class="step-title">{{ "compose-your" | translate }} <span class="ft-gotham-black">{{ team.id }}</span>
+          </h1>
 
-        <div class="flex-container">
-          <form [formGroup]="teamDetailsForm" class="custom-form" (ngSubmit)="submitTeamDetailsForm(team.id)">
-            <p class="step-subtitle">{{ "nb-players"| translate }}</p>
-            <div class="flex-row label-container">
-              <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 2 ? 'selected' : ''}}" for="nbPlayer2">
-                2
-              </label>
-              <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 3 ? 'selected' : ''}}" for="nbPlayer3">
-                3
-              </label>
-              <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 4 ? 'selected' : ''}}" for="nbPlayer4">
-                4
-              </label>
-              <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 5 ? 'selected' : ''}}" for="nbPlayer5">
-                5
-              </label>
+          <div class="flex-container">
+            <div class="mb-big">
+              <p class="step-subtitle">{{ "nb-players"| translate }}</p>
+
+              <div class="flex-row label-container">
+                <label
+                  class="nb-player-label {{teamDetailsForm.value.nbPlayer == 2 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
+                  for="nbPlayer2">
+                  2
+                </label>
+                <label
+                  class="nb-player-label {{teamDetailsForm.value.nbPlayer == 3 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
+                  for="nbPlayer3">
+                  3
+                </label>
+                <label
+                  class="nb-player-label {{teamDetailsForm.value.nbPlayer == 4 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
+                  for="nbPlayer4">
+                  4
+                </label>
+                <label
+                  class="nb-player-label {{teamDetailsForm.value.nbPlayer == 5 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
+                  for="nbPlayer5">
+                  5
+                </label>
+              </div>
             </div>
 
             <input id="nbPlayer2" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="2">
             <input id="nbPlayer3" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="3">
             <input id="nbPlayer4" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="4">
             <input id="nbPlayer5" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="5">
+
+            <!--errors display for nb players-->
+            <div class="input-error animate__animated animate__headShake">
+              <p *ngIf="formErrors(teamDetailsForm.get('nbPlayer'))?.required"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-nb-player-required-error" | translate}}
+              </p>
+            </div>
 
             <input class="custom-text-input" type="text" formControlName="teamName"
                    placeholder="{{'team-name-placeholder' | translate}}"
@@ -156,39 +117,145 @@
                    ngxTouchKeyboardFullScreen
                    inputmode='text'
                    #touchKeyboard="ngxTouchKeyboard"
-                   (focus)="customOpenKeyboard(touchKeyboard)"
-                   (blur)="customCloseKeyboard(touchKeyboard)"
+                   (focus)="customToggleKeyboard(touchKeyboard)"
+                   (blur)="customToggleKeyboard(touchKeyboard)"
             >
-            <input class="custom-text-input" type="email" formControlName="teamEmail"
+
+            <!--errors display for team name-->
+            <div class="input-error animate__animated animate__headShake">
+              <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.minlength"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-name-length-error" | translate}}
+              </p>
+              <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.required"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-name-required-error" | translate}}
+              </p>
+            </div>
+
+            <input class="custom-text-input" type="text" formControlName="teamEmail"
                    placeholder="{{'team-email-placeholder' | translate}}"
                    required
                    ngxTouchKeyboard
                    ngxTouchKeyboardFullScreen
                    inputmode='email'
                    #touchKeyboard2="ngxTouchKeyboard"
-                   (focus)="customOpenKeyboard(touchKeyboard2)"
-                   (blur)="customCloseKeyboard(touchKeyboard2)"
+                   (focus)="customToggleKeyboard(touchKeyboard2)"
+                   (blur)="customToggleKeyboard(touchKeyboard2)"
             >
 
-            <button class="valid-btn" cdkStepperNext [disabled]="teamDetailsForm.invalid">
-              {{ "valid-btn" | translate }}
-            </button>
-          </form>
+            <!--errors display for team email-->
+            <div class="input-error animate__animated animate__headShake">
+              <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.email"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-email-invalid-error" | translate}}
+              </p>
+              <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.required"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-email-required-error" | translate}}
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+
+        <div class="validation-container">
+          <button class="valid-btn" cdkStepperNext [disabled]="teamDetailsForm.invalid">
+            {{ "valid-btn" | translate }}
+          </button>
+        </div>
+      </form>
     </cdk-step>
+
+    <!--    get players infos-->
+    <cdk-step>
+      <form [formGroup]="playerInfosForm" (ngSubmit)="submitPlayerInfosForm(team.id)"
+            class="custom-form step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
+        <div class="step-content">
+          <h1 class="step-title">{{"provide-players-infos-title" | translate}}</h1>
+
+          <div class="players-infos-container flex-wrap">
+            <div class="player-infos" *ngFor="let player of team.players; index as i">
+              <div class="flex-container">
+                <p class="step-subtitle bigger bold">{{"player" | translate}} {{ i + 1 }}</p>
+
+                <div class="flex-row gender-container label-container flex-wrap">
+                  <label
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'h'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="genderH{{i}}">
+                    {{"gender-male-label" | translate}}
+                  </label>
+                  <label
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'f'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="genderF{{i}}">
+                    {{"gender-female-label" | translate}}
+                  </label>
+                  <label
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'x'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="genderX{{i}}">
+                    {{"gender-other-label" | translate}}
+                  </label>
+                </div>
+
+                <div class="label-container flex-justify-center">
+                  <label
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '-11' ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange2{{i}}">
+                    -11
+                  </label>
+                  <label
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '11-17'  ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange3{{i}}">
+                    11-17
+                  </label>
+                  <label
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) ==  '18-25' ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange4{{i}}">
+                    18-25
+                  </label>
+                  <label
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '25+'  ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange5{{i}}">
+                    25+
+                  </label>
+                </div>
+
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange2{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="-11">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange3{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="11-17">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange4{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="18-25">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange5{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="25+">
+
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderH{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="h">
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderF{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="f">
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderX{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="x">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="validation-container">
+          <button class="valid-btn" cdkStepperNext [disabled]="playerInfosForm.invalid">
+            {{ "valid-btn" | translate }}
+          </button>
+        </div>
+      </form>
+    </cdk-step>
+
+
+    <!--    scan team tag-->
     <cdk-step [stepControl]="teamDetailsForm">
-      <div class="step-container animate__animated {{animationClass}}   ">
-        <div>
+      <div class="custom-form step-container animate__animated {{animationClass}}   ">
+        <div class="step-content">
           <h1 class="step-title"><span class="ft-gotham-black">{{ team.id }}</span> {{ teamDetailsForm.value.teamName }}
           </h1>
+
+          <p class="step-subtitle">{{ "please-scan-device" | translate }}</p>
         </div>
 
-        <p class="step-subtitle">{{ "please-scan-device" | translate }}</p>
-
-        <button class="micro" (click)="toggleCheckedModal()">
-          <img src="/assets/icons/waves.png" width="50" alt="">
-        </button>
+        <div class="validation-container">
+          <button class="valid-btn" (click)="toggleCheckedModal()">
+            {{ "valid-btn" | translate }}
+          </button>
+        </div>
       </div>
 
       <div class="modal animate__animated animate__bounceInDown {{fadeOutModalClass}}" *ngIf="checkedModalVisibility">
@@ -198,7 +265,8 @@
           <img class="icon info" src="./assets/icons/close_modal.svg" alt="">
           </span>
             <div class="modal-header">
-              <p class="modal-title m-b" [innerHTML]="teamIsReadyTranslation(team.id, teamDetailsForm.value.teamName)"></p>
+              <p class="modal-title m-b"
+                 [innerHTML]="teamIsReadyTranslation(team.id, teamDetailsForm.value.teamName)"></p>
 
               <div *ngIf="allTeamAreCompleted()">
                 <p
@@ -206,7 +274,7 @@
               </div>
             </div>
 
-            <button class="check-valid" cdkStepperNext (click)="sendDataIfAllTeamAreCompleted()">
+            <button class="check-valid" cdkStepperNext (click)="toggleCheckedModal()">
               <img class="icon check" src="./assets/icons/check.svg" alt="">
             </button>
           </div>

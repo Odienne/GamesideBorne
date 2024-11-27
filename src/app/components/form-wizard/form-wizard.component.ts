@@ -1,12 +1,12 @@
-import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, forwardRef, input, Output} from '@angular/core';
 import {CdkStepper, CdkStepperModule} from '@angular/cdk/stepper';
-import {NgForOf, NgIf, NgTemplateOutlet} from '@angular/common';
+import {NgForOf, NgIf, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgxTouchKeyboardDirective, NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
 import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
 import {MatStep, MatStepperModule} from "@angular/material/stepper";
-
+import {ReservationService} from "../../services/reservation.service";
 
 @Component({
   selector: 'form-wizard-container',
@@ -17,27 +17,29 @@ import {MatStep, MatStepperModule} from "@angular/material/stepper";
     CdkStepperModule, ReactiveFormsModule,
     NgIf, NgForOf, NgxTouchKeyboardModule, TranslateModule, LangSelectionComponent, MatStep,
     MatStepperModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule, NgOptimizedImage,
   ],
 })
 export class FormWizardContainer {
-  currentLocale = localStorage.getItem("lang");
-  infoModalVisibility: boolean = false;
-
   form!: FormGroup;
-  gameModeForm!: FormGroup;
   teamDetailsForm!: FormGroup;
+  playerInfosForm!: FormGroup;
   nbTeams = 0;
+  maxTeams = 99;
   isKeyboardOpen: boolean = false;
 
-  teams: any[] = [];
+  teams: any[] = [{}]; // array of teams, used to iterate in template
+  players: any[] = []; // contains player data such as age and gender, keyed by groupID and used to
   linearMode: boolean = true;
   checkedModalVisibility: boolean = false;
+  nbTeamsAnimationClass: string = "";
   animationClass: string = "animate__slideInRight";
   firstAnimationClass: string = "animate__fadeIn";
   fadeOutModalClass: string = "";
 
-  constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService) {
+  previousLabelTarget: string = '';
+
+  constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService, private reservationService: ReservationService) {
   }
 
   ngAfterViewChecked() {
@@ -46,58 +48,148 @@ export class FormWizardContainer {
 
   ngOnInit() {
     this.form = this.fb.group({
-      nbTeams: [this.nbTeams, [Validators.required, Validators.min(1)]],
-      groupName: [null],
-    })
-    this.gameModeForm = this.fb.group({
-      gamemode: [null, [Validators.required]],
-    })
+      nbTeams: [this.nbTeams, [Validators.required, Validators.min(1), Validators.max(this.maxTeams)]],
+      groupName: [null, Validators.maxLength(50)],
+    });
     this.teamDetailsForm = this.fb.group({
-      teamName: ["", [Validators.required, Validators.minLength(3)]],
-      teamEmail: ["", [Validators.required, Validators.email]],
+      teamName: ["", [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      teamEmail: ["", [Validators.required, Validators.email, Validators.maxLength(80)]],
       nbPlayer: [null, [Validators.required, Validators.min(2), Validators.max(5)]],
-    })
+      playersInfos: []
+    });
+
+    this.playerInfosForm = this.fb.group({});
   }
 
-  submitForm() {
-    if (this.form.valid) {
-      /*need to reset the form after each submit to avoid a bug*/
-      /*also need to reset other forms, otherwise coming back to this screen will cause a bug*/
-      this.gameModeForm.reset();
-      this.teamDetailsForm.reset();
-      this.teams = [];
-
-      for (let i = 0; i < this.form.value.nbTeams; i++) {
-        this.teams.push({id: "équipe " + (i + 1), name: ""});
-      }
-    }
-  }
-
+  /**
+   * this function communicates with parent component implementing CdkStepper which triggers events on next/previous events
+   * I use these events to update the animation class on stepContainer, making it slideFromLeft or slideFromRight giving it more fluidity
+   * @param $event
+   */
   receiveMessage($event: { name: string, value: any }) {
     if ($event.name === "returnToStart") {
       this.returnToStart();
     } else if ($event.name === "prev") {
-      console.log("goind back")
       this.animationClass = "animate__slideInLeft";
       this.firstAnimationClass = this.animationClass;
     } else if ($event.name === "next") {
-      console.log("goind next")
       this.animationClass = "animate__slideInRight";
     }
   }
 
+  /**
+   * related to the first form, decrease nbTeams by 1
+   * also check if nbTeams is > 1 to display a new input asking for a groupName (required)
+   * if not, needs to remove the required validators of the groupName field
+   */
+  minusOneTeam() {
+    if (this.nbTeams > 0) {
+      this.nbTeams--;
+      this.updateNbTeamsAnimationClass("scale-down-bounce");
+    }
+    this.form.controls['nbTeams'].setValue(this.nbTeams);
+
+    this.updateGroupNameValidators();
+  }
+
+  /**
+   * related to the first form, decrease nbTeams by 1
+   * also check if nbTeams is > 1 to display a new input asking for a groupName (required)
+   * if not, needs to remove the required validators of the groupName field
+   */
+  addOneTeam() {
+    if (this.nbTeams < this.maxTeams) {
+      this.nbTeams++;
+      this.updateNbTeamsAnimationClass("scale-up-bounce");
+    }
+    this.form.controls['nbTeams'].setValue(this.nbTeams);
+
+    this.updateGroupNameValidators();
+  }
+
+  updateNbTeamsAnimationClass(animation = "scale-up-bounce") {
+    this.nbTeamsAnimationClass = animation;
+    setTimeout(() => {
+      this.nbTeamsAnimationClass = "";
+    }, 500)
+  }
+
+  /**
+   * check whether I need to display
+   */
+  updateGroupNameValidators() {
+    if (this.nbTeams > 1) {
+      this.form.controls['groupName'].setValidators([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(50)
+      ]);
+    } else if (this.nbTeams < 2) {
+      this.form.controls['groupName'].setValidators([]);
+      this.form.controls['groupName'].setValue(null);
+      this.form.controls['groupName'].updateValueAndValidity();
+      this.form.markAsPristine(); //to reset form
+      this.form.markAsUntouched(); //to reset form
+    }
+  }
+
+  /**
+   * submit first form indicating the number of teams (and eventually the groupName)
+   * Then if the form is valid, it populates an array of teams used to iterate in template
+   */
+  submitForm() {
+    if (this.form.valid) {
+      /*need to reset the form after each submit to avoid a bug*/
+      /*also need to reset other forms, otherwise coming back to this screen will cause a bug*/
+      this.teamDetailsForm.reset();
+      this.teams = [];
+
+      for (let i = 0; i < this.form.value.nbTeams; i++) {
+        this.teams.push({id: this.translate.instant("team") + " " + (i + 1), name: ""});
+      }
+    }
+  }
+
+  /**
+   * Submit the teamDetailsFrom, used to gather data for each team : team name, email, nbPlayer
+   * @param id
+   */
   submitTeamDetailsForm(id: any) {
     if (this.teamDetailsForm.valid) {
       let index = this.teams.findIndex(team => team.id === id);
       this.teams[index].name = this.teamDetailsForm.value.teamName;
+      this.teams[index].email = this.teamDetailsForm.value.teamEmail;
+      this.teams[index].nbPlayer = this.teamDetailsForm.value.nbPlayer;
+
+
+      //reset array (in case you go back it would push more and more players)
+      this.teams[index].players = [];
+
+      //reset formControls of formGroup
+      this.playerInfosForm = this.fb.group({});
+
+      for (let i = 0; i < this.teamDetailsForm.value.nbPlayer; i++) {
+        this.teams[index].players.push({age: null, gender: null}); //to iterate on it in template
+
+        //also need to manually add a formControl for each player
+        this.playerInfosForm.addControl('ageplayer' + (i + 1), this.fb.control(null));
+        this.playerInfosForm.addControl('genderplayer' + (i + 1), this.fb.control(null));
+      }
     }
+
+    //also reset nbPlayer
+    // this.teamDetailsForm.controls['nbPlayer'].setValue(null);
   }
 
+
+  /**
+   * Returns whether the teams have their attributed names and are complete
+   */
   allTeamAreCompleted() {
     let allTeamAreCompleted = true;
 
     this.teams.forEach(team => {
-      if (team.name === "") {
+      if (team.name === "" || team.name === null) {
         allTeamAreCompleted = false;
       }
     })
@@ -105,86 +197,51 @@ export class FormWizardContainer {
     return allTeamAreCompleted;
   }
 
-  minusOneTeam() {
-    if (this.nbTeams > 0) {
-      this.nbTeams--;
-    }
-    this.form.controls['nbTeams'].setValue(this.nbTeams);
-
-    if (this.nbTeams > 1) {
-      this.form.controls['groupName'].setValidators([
-        Validators.required,
-        Validators.minLength(3)
-      ]);
-    } else if (this.nbTeams < 2) {
-      this.form.controls['groupName'].setValidators([]);
-    }
-    this.form.controls['groupName'].updateValueAndValidity();
-  }
-
-  addOneTeam() {
-    if (this.nbTeams < 10) {
-      this.nbTeams++;
-    }
-    this.form.controls['nbTeams'].setValue(this.nbTeams);
-
-    if (this.nbTeams > 1) {
-      this.form.controls['groupName'].setValidators([
-        Validators.required,
-        Validators.minLength(3)
-      ]);
-    } else if (this.nbTeams < 2) {
-      this.form.controls['groupName'].setValidators([]);
-    }
-    this.form.controls['groupName'].updateValueAndValidity();
-  }
-
 
   returnToStart() {
-    this.form.reset();
-    this.gameModeForm.reset();
-    this.teamDetailsForm.reset();
-    this.nbTeams = 0;
-    this.teams = [];
     window.location.href = "";
   }
 
-  toggleInfoModal() {
-    //I want to let the animation class handle the visibility first
-    if (this.infoModalVisibility) {
-      this.fadeOutModalClass = "animate__bounceOutUp";
-      setTimeout(() => {
-        this.infoModalVisibility = !this.infoModalVisibility;
-        this.fadeOutModalClass = "";
-      }, 1000)
-    } else {
-      this.infoModalVisibility = !this.infoModalVisibility;
+  /**
+   * The toggle function for the confirmation modal when team data is completed and badge is scanned, also appears when all teams are completed
+   */
+  async toggleCheckedModal() {
+    this.checkedModalVisibility = !this.checkedModalVisibility; //toggle modal
+
+
+    //We need to prevent user from closing the last modal
+    // it acts as a confirmation and sends data before returning to home screen
+    //only triggers once, we do not want to resend data
+    if (this.checkedModalVisibility && this.allTeamAreCompleted()) { //meaning the last team is completed
+      let res = await this.sendData();
+      if (res === true) {
+        //close modal after 15 seconds (unless user clicks on it again
+        setTimeout(() => {
+          this.returnToStart();
+        }, 10000)
+      } else {
+        alert("could not save data")
+      }
+    } else if (!this.checkedModalVisibility && this.allTeamAreCompleted()) { //if user press check or cancel
+      this.returnToStart();
     }
   }
 
-  toggleCheckedModal() {
-    //prevent user from closing last modal, acts as a confirmation instead and sends data before returning to home screen
-    /*must only trigger if modal was shown once, and on cancel btn*/
-    if (this.checkedModalVisibility && this.allTeamAreCompleted()) {
-      this.sendDataIfAllTeamAreCompleted();
-    }
-    this.checkedModalVisibility = !this.checkedModalVisibility;
+  /**
+   * When all teams are completed, data is sent to backend to create teams, groups, etc.
+   */
+  async sendData() {
+    //this.reservationService.createTeams({});
+    //then, returns to home screen
+    return true;
   }
 
-  sendDataIfAllTeamAreCompleted() {
-    if (this.allTeamAreCompleted()) {
-      //todo send data to backend
-      console.log('send data to backend')
 
-      this.form.reset();
-      this.gameModeForm.reset();
-      this.teamDetailsForm.reset();
-      this.nbTeams = 0;
-      this.teams = [];
-      window.location.href = "";
-    }
-  }
-
+  /**
+   * quick translation for template
+   * @param id
+   * @param teamName
+   */
   teamIsReadyTranslation(id: any, teamName: string) {
     return this.translate.instant('the-team-is-ready', {
       teamId: id,
@@ -192,18 +249,56 @@ export class FormWizardContainer {
     })
   }
 
-  translateModalTextInformation() {
-    return this.translate.instant('modal-text-information')
+  /**
+   * custom toggle keyboard function because I need to manage a state to trigger animations
+   * @param touchKeyboard
+   */
+  customToggleKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
+    this.isKeyboardOpen = !this.isKeyboardOpen;
+    this.isKeyboardOpen ? touchKeyboard.openPanel() : touchKeyboard.closePanel();
   }
 
-  customOpenKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
-    this.isKeyboardOpen = !this.isKeyboardOpen;
-    touchKeyboard.openPanel();
+  /**
+   * Returns errors array of a formControl, used in template to display errors
+   * @param control
+   */
+  formErrors(control: any) {
+    //only returns error if the user has interacted and left the field at least once
+    if (control?.touched) {
+      return control?.errors;
+    }
+    return null;
   }
 
-  customCloseKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
-    this.isKeyboardOpen = !this.isKeyboardOpen;
-    touchKeyboard.closePanel();
+  submitPlayerInfosForm(teamId: any) {
+    if (this.playerInfosForm.valid) {
+      //add players infos into team object under .players
+      let index = this.teams.findIndex(team => team.id === teamId);
+
+      for (let i = 0; i < this.teams[index].nbPlayer; i++) {
+        let playerIndex = i + 1;
+        this.teams[index].players[i].age = this.getPlayerInfosFormValue('ageplayer', playerIndex);
+        this.teams[index].players[i].gender = this.getPlayerInfosFormValue('genderplayer', playerIndex);
+      }
+
+      //reset the form for next team
+      this.playerInfosForm.reset();
+    }
+  }
+
+  getPlayerInfosFormValue(formControlName: string, playerId: number) {
+    return this.playerInfosForm.value[formControlName + playerId];
+  }
+
+  uncheckPlayerGender(inputId: string, elem: any) {
+    let targetElemId = elem.target.id;
+
+    if(this.playerInfosForm.controls[inputId].value && this.previousLabelTarget === targetElemId) {
+      this.playerInfosForm.controls[inputId].setValue(null);
+      this.playerInfosForm.controls[inputId].updateValueAndValidity();
+    }
+
+    this.previousLabelTarget = targetElemId;
   }
 }
 
@@ -218,18 +313,19 @@ export class FormWizardContainer {
 export class FormWizard extends CdkStepper {
   @Output() messageEvent = new EventEmitter<{ name: string, value: any }>();
   cancelModalVisibility: boolean = false;
-  hideAnimationClass : string = "";
+  hideAnimationClass: string = "";
   fadeOutModalClass: string = "";
-
 
   override previous() {
     console.log('going back');
+    console.log(this.selectedIndex)
     this.messageEvent.emit({name: "prev", value: null});
     super.previous();
   }
 
   override next() {
     console.log('going next');
+    console.log(this.selectedIndex)
     this.messageEvent.emit({name: "next", value: null});
     super.next();
   }
@@ -251,11 +347,12 @@ export class FormWizard extends CdkStepper {
   }
 
   toggleCancelModal() {
-    this.fadeOutModalClass = "animate__bounceOutUp";
+    //todo this is broken
+    this.fadeOutModalClass = "animate__bounceInDown";
     if (this.cancelModalVisibility) {
+      this.fadeOutModalClass = "animate__bounceOutUp";
       setTimeout(() => {
         this.cancelModalVisibility = !this.cancelModalVisibility;
-        this.fadeOutModalClass = "";
       }, 1000)
     } else {
       this.cancelModalVisibility = !this.cancelModalVisibility;
