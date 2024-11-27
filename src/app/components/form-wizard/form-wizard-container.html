@@ -4,7 +4,7 @@
           class="custom-form step-container
       animate__animated {{ firstAnimationClass }} {{ isKeyboardOpen ? 'animated-padding-for-keyboard' : '' }}">
 
-      <div class="step-content">
+      <div class="step-content" style="height: 580px">
         <h1 class="step-title">{{ "nb-team-in-group-title" | translate }}</h1>
 
         <div class="manage-nbTeams-container">
@@ -14,7 +14,7 @@
             </button>
           </div>
           <div>
-            <span class="nbTeams-value">
+            <span class="nbTeams-value animate__animated {{nbTeamsAnimationClass}}">
               {{ nbTeams }}
             </span>
           </div>
@@ -25,8 +25,8 @@
           </div>
         </div>
 
-        <div class="flex-container animate__animated animated__fadeIn" *ngIf="nbTeams > 1">
-          <input class="custom-text-input"
+        <div class="flex-container animate__animated" *ngIf="nbTeams > 1">
+          <input class="custom-text-input animate__animated"
                  required type="text" formControlName="groupName"
                  placeholder="{{'group-name-placeholder' | translate}}"
                  ngxTouchKeyboard
@@ -39,11 +39,13 @@
 
           <!--errors display for group name-->
           <div class="input-error">
-            <p *ngIf="formErrors(form.get('groupName'))?.minlength" class="error-text animate__animated animate__headShake">
-              Your group name should be at least 3 characters.
+            <p *ngIf="formErrors(form.get('groupName'))?.minlength"
+               class="error-text animate__animated animate__headShake">
+              {{ 'group-name-length-error' | translate }}
             </p>
-            <p *ngIf="formErrors(form.get('groupName'))?.required" class="error-text animate__animated animate__headShake">
-              Please enter your group name.
+            <p *ngIf="formErrors(form.get('groupName'))?.required"
+               class="error-text animate__animated animate__headShake">
+              {{ "group-name-required-error" | translate }}
             </p>
           </div>
         </div>
@@ -72,20 +74,24 @@
               <p class="step-subtitle">{{ "nb-players"| translate }}</p>
 
               <div class="flex-row label-container">
-                <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 2 ? 'selected' : ''}}"
-                       for="nbPlayer2">
+                <label
+                  class="nb-player-label {{teamDetailsForm.value.nbPlayer == 2 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
+                  for="nbPlayer2">
                   2
                 </label>
-                <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 3 ? 'selected' : ''}}"
-                       for="nbPlayer3">
+                <label
+                  class="nb-player-label {{teamDetailsForm.value.nbPlayer == 3 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
+                  for="nbPlayer3">
                   3
                 </label>
-                <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 4 ? 'selected' : ''}}"
-                       for="nbPlayer4">
+                <label
+                  class="nb-player-label {{teamDetailsForm.value.nbPlayer == 4 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
+                  for="nbPlayer4">
                   4
                 </label>
-                <label class="nb-player-label {{teamDetailsForm.value.nbPlayer == 5 ? 'selected' : ''}}"
-                       for="nbPlayer5">
+                <label
+                  class="nb-player-label {{teamDetailsForm.value.nbPlayer == 5 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
+                  for="nbPlayer5">
                   5
                 </label>
               </div>
@@ -98,8 +104,9 @@
 
             <!--errors display for nb players-->
             <div class="input-error animate__animated animate__headShake">
-              <p *ngIf="formErrors(teamDetailsForm.get('nbPlayer'))?.required" class="error-text animate__animated animate__headShake">
-                Please select the number of players in your team.
+              <p *ngIf="formErrors(teamDetailsForm.get('nbPlayer'))?.required"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-nb-player-required-error" | translate}}
               </p>
             </div>
 
@@ -116,11 +123,13 @@
 
             <!--errors display for team name-->
             <div class="input-error animate__animated animate__headShake">
-              <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.minlength" class="error-text animate__animated animate__headShake">
-                Your team name should be at least 3 characters.
+              <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.minlength"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-name-length-error" | translate}}
               </p>
-              <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.required" class="error-text animate__animated animate__headShake">
-                Please enter your team name.
+              <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.required"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-name-required-error" | translate}}
               </p>
             </div>
 
@@ -137,11 +146,13 @@
 
             <!--errors display for team email-->
             <div class="input-error animate__animated animate__headShake">
-              <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.email" class="error-text animate__animated animate__headShake">
-                Your team email is invalid.
+              <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.email"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-email-invalid-error" | translate}}
               </p>
-              <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.required" class="error-text animate__animated animate__headShake">
-                Please enter your team email to receive your score sheet.
+              <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.required"
+                 class="error-text animate__animated animate__headShake">
+                {{"team-email-required-error" | translate}}
               </p>
             </div>
           </div>
@@ -157,60 +168,65 @@
 
     <!--    get players infos-->
     <cdk-step>
-      <form [formGroup]="playerInfosForm" (ngSubmit)="submitPlayerInfosForm()"
+      <form [formGroup]="playerInfosForm" (ngSubmit)="submitPlayerInfosForm(team.id)"
             class="custom-form step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
         <div class="step-content">
-          <h1 class="step-title">Pouvez-vous nous indiquer l'âge et le genre de vos joueurs ?</h1>
+          <h1 class="step-title">{{"provide-players-infos-title" | translate}}</h1>
 
-          <!-- todo change it-->
           <div class="players-infos-container flex-wrap">
             <div class="player-infos" *ngFor="let player of team.players; index as i">
               <div class="flex-container">
-                <p class="step-subtitle bold">Joueur {{ i + 1 }}</p>
+                <p class="step-subtitle bigger bold">{{"player" | translate}} {{ i + 1 }}</p>
 
                 <div class="flex-row gender-container label-container flex-wrap">
-                  <label class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'h'  ? 'selected' : ''}}"
-                         for="genderH{{i}}">
-                    Homme
+                  <label
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'h'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="genderH{{i}}">
+                    {{"gender-male-label" | translate}}
                   </label>
-                  <label class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'f'  ? 'selected' : ''}}"
-                         for="genderF{{i}}">
-                    Femme
+                  <label
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'f'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="genderF{{i}}">
+                    {{"gender-female-label" | translate}}
                   </label>
-                  <label class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'x'  ? 'selected' : ''}}"
-                         for="genderX{{i}}">
-                    Autre
+                  <label
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'x'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="genderX{{i}}">
+                    {{"gender-other-label" | translate}}
                   </label>
                 </div>
 
                 <div class="label-container flex-justify-center">
-                  <label class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '-11' ? 'selected' : ''}}"
-                         for="ageRange2{{i}}">
+                  <label
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '-11' ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange2{{i}}">
                     -11
                   </label>
-                  <label class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '11-17'  ? 'selected' : ''}}"
-                         for="ageRange3{{i}}">
+                  <label
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '11-17'  ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange3{{i}}">
                     11-17
                   </label>
-                  <label class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) ==  '18-25' ? 'selected' : ''}}"
-                         for="ageRange4{{i}}">
+                  <label
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) ==  '18-25' ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange4{{i}}">
                     18-25
                   </label>
-                  <label class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '25+'  ? 'selected' : ''}}"
-                         for="ageRange5{{i}}">
+                  <label
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '25+'  ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange5{{i}}">
                     25+
                   </label>
                 </div>
 
-                <input id="ageRange2{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="-11">
-                <input id="ageRange3{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="11-17">
-                <input id="ageRange4{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="18-25">
-                <input id="ageRange5{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="25+">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange2{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="-11">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange3{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="11-17">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange4{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="18-25">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange5{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="25+">
 
-
-                <input id="genderH{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="h">
-                <input id="genderF{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="f">
-                <input id="genderX{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="x">
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderH{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="h">
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderF{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="f">
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderX{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="x">
               </div>
             </div>
           </div>
@@ -236,8 +252,8 @@
         </div>
 
         <div class="validation-container">
-          <button class="micro" (click)="toggleCheckedModal()">
-            <img src="/assets/icons/waves.png" width="50" alt="">
+          <button class="valid-btn" (click)="toggleCheckedModal()">
+            {{ "valid-btn" | translate }}
           </button>
         </div>
       </div>

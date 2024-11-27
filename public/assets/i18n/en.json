@@ -8,6 +8,7 @@
   "halloween-gamemode-title": "Halloween game mode",
   "coming-soon": "Coming soon",
   "home-text": "Registration",
+  "player": "Player",
   "team": "team",
   "team-name": "Team name",
   "nb-players": "Numbers of players",
@@ -17,5 +18,16 @@
   "your-teams-are-ready": "Your teams are formed, head to your Game Master!",
   "the-team-is-ready": "<span class=\"ft-gotham-black\">{{ teamId }}</span> {{ teamName }} <br>is ready!",
   "compose-your": "Compose your",
-  "modal-text-information": "<span class=\"ft-leoSans\">The Action side</span> with basic rules.<br><br>16 rooms over 600m2 to compete in teams in ultra-immersive themed universes: <span class=\"ft-leoSans\">Magic School</span>, <span class=\"ft-leoSans\">Indiana Run</span>, <span class=\"ft-leoSans\">Stars Zone</span> or <span class=\"ft-leoSans\">Pirate Bay</span>, there's something for every taste!"
+  "modal-text-information": "<span class=\"ft-leoSans\">The Action side</span> with basic rules.<br><br>16 rooms over 600m2 to compete in teams in ultra-immersive themed universes: <span class=\"ft-leoSans\">Magic School</span>, <span class=\"ft-leoSans\">Indiana Run</span>, <span class=\"ft-leoSans\">Stars Zone</span> or <span class=\"ft-leoSans\">Pirate Bay</span>, there's something for every taste!",
+  "group-name-length-error": "Your group name should be at least 3 characters.",
+  "group-name-required-error": "Please enter your group name.",
+  "team-nb-player-required-error": "Please select the number of players in your team.",
+  "team-name-length-error": "Your team name should be at least 3 characters.",
+  "team-name-required-error": "Please enter your team name.",
+  "team-email-invalid-error": "Your team email is invalid.",
+  "team-email-required-error": "Please enter your team email to receive your score sheet.",
+  "provide-players-infos-title": "Could you provide the age and gender of your players? (optional)",
+  "gender-male-label": "Man",
+  "gender-female-label": "Woman",
+  "gender-other-label": "Other"
 }

@@ -41,6 +41,9 @@
     &.bold {
       font-weight: bold;
     }
+    &.bigger {
+      font-size: 1.8em;
+    }
   }
 }
 
@@ -174,11 +177,18 @@
   font-family: GothamNarrow, sans-serif;
   font-weight: bold;
   cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
 
   &.selected {
     color: black;
     border-color: #72b74d;
     background: #72b74d;
+    box-shadow: 10px 10px 20px 0 #00000066;
+    animation: scale-bounce 0.3s ease-in-out;
+  }
+
+  &.not-selected {
+    filter: grayscale(0.8);
   }
 }
 
@@ -196,11 +206,19 @@
   font-family: GothamNarrow, sans-serif;
   font-weight: bold;
   cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
 
   &.selected {
     color: black;
     border-color: #72b74d;
     background: #72b74d;
+
+    box-shadow: 10px 10px 20px 0 #00000066;
+    animation: scale-bounce 0.3s ease-in-out;
+  }
+
+  &.not-selected {
+    filter: grayscale(0.8);
   }
 
   &:first-child {
@@ -208,6 +226,7 @@
     border-bottom-left-radius: 50%;
     padding: 16px 18px;
   }
+
   &:last-child {
     border-top-right-radius: 50%;
     border-bottom-right-radius: 50%;
@@ -233,6 +252,8 @@
   font-weight: bold;
   cursor: pointer;
 
+  transition: transform 0.3s, box-shadow 0.3s;
+
   & svg {
     fill: white;
   }
@@ -241,10 +262,16 @@
     color: black;
     border-color: #72b74d;
     background: #72b74d;
+    box-shadow: 10px 10px 20px 0 #00000066;
+    animation: scale-bounce 0.3s ease-in-out;
 
     & svg {
       fill: black;
     }
+  }
+
+  &.not-selected {
+    filter: grayscale(0.8);
   }
 }
 
@@ -280,6 +307,7 @@
 
 
 .custom-text-input {
+  animation-name: fadeInDown;
   display: block;
   width: 75%;
   height: 100%;
@@ -333,9 +361,16 @@
     border-radius: 50%;
     border: 3px solid #f7b002;
     box-shadow: 10px 10px 20px 0 #00000066;
+    transition: transform 0.3s, border 0.3s, box-shadow 0.3s;
 
     .icon {
       width: 60px;
+    }
+
+    &:active {
+      border-color: #f78d02;
+      box-shadow: none;
+      transform: scale(0.9);
     }
   }
 }

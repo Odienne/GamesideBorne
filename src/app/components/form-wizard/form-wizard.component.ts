@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, forwardRef, input, Output} from '@angular/core';
 import {CdkStepper, CdkStepperModule} from '@angular/cdk/stepper';
 import {NgForOf, NgIf, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
@@ -7,7 +7,6 @@ import {NgxTouchKeyboardDirective, NgxTouchKeyboardModule} from 'ngx-touch-keybo
 import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
 import {MatStep, MatStepperModule} from "@angular/material/stepper";
 import {ReservationService} from "../../services/reservation.service";
-
 
 @Component({
   selector: 'form-wizard-container',
@@ -26,16 +25,19 @@ export class FormWizardContainer {
   teamDetailsForm!: FormGroup;
   playerInfosForm!: FormGroup;
   nbTeams = 0;
-  maxTeams = 10;
+  maxTeams = 99;
   isKeyboardOpen: boolean = false;
 
   teams: any[] = [{}]; // array of teams, used to iterate in template
   players: any[] = []; // contains player data such as age and gender, keyed by groupID and used to
-  linearMode: boolean = false;
+  linearMode: boolean = true;
   checkedModalVisibility: boolean = false;
+  nbTeamsAnimationClass: string = "";
   animationClass: string = "animate__slideInRight";
   firstAnimationClass: string = "animate__fadeIn";
   fadeOutModalClass: string = "";
+
+  previousLabelTarget: string = '';
 
   constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService, private reservationService: ReservationService) {
   }
@@ -83,6 +85,7 @@ export class FormWizardContainer {
   minusOneTeam() {
     if (this.nbTeams > 0) {
       this.nbTeams--;
+      this.updateNbTeamsAnimationClass("scale-down-bounce");
     }
     this.form.controls['nbTeams'].setValue(this.nbTeams);
 
@@ -97,10 +100,18 @@ export class FormWizardContainer {
   addOneTeam() {
     if (this.nbTeams < this.maxTeams) {
       this.nbTeams++;
+      this.updateNbTeamsAnimationClass("scale-up-bounce");
     }
     this.form.controls['nbTeams'].setValue(this.nbTeams);
 
     this.updateGroupNameValidators();
+  }
+
+  updateNbTeamsAnimationClass(animation = "scale-up-bounce") {
+    this.nbTeamsAnimationClass = animation;
+    setTimeout(() => {
+      this.nbTeamsAnimationClass = "";
+    }, 500)
   }
 
   /**
@@ -115,9 +126,11 @@ export class FormWizardContainer {
       ]);
     } else if (this.nbTeams < 2) {
       this.form.controls['groupName'].setValidators([]);
-      this.form.controls['groupName'].setValue(null); // reset groupName
+      this.form.controls['groupName'].setValue(null);
+      this.form.controls['groupName'].updateValueAndValidity();
+      this.form.markAsPristine(); //to reset form
+      this.form.markAsUntouched(); //to reset form
     }
-    this.form.controls['groupName'].updateValueAndValidity();
   }
 
   /**
@@ -151,6 +164,7 @@ export class FormWizardContainer {
 
       //reset array (in case you go back it would push more and more players)
       this.teams[index].players = [];
+
       //reset formControls of formGroup
       this.playerInfosForm = this.fb.group({});
 
@@ -161,13 +175,10 @@ export class FormWizardContainer {
         this.playerInfosForm.addControl('ageplayer' + (i + 1), this.fb.control(null));
         this.playerInfosForm.addControl('genderplayer' + (i + 1), this.fb.control(null));
       }
-      console.log(this.playerInfosForm)
-      //and save playerInfos into teams global data
-      // this.teams[index].playersInfos = this.players;
-      // console.log(this.teams)
-      //then reset players data for next team
-      // this.players = [];
     }
+
+    //also reset nbPlayer
+    // this.teamDetailsForm.controls['nbPlayer'].setValue(null);
   }
 
 
@@ -188,10 +199,6 @@ export class FormWizardContainer {
 
 
   returnToStart() {
-    console.log('return to start')
-    this.teamDetailsForm.reset();
-    this.nbTeams = 0;
-    this.teams = [];
     window.location.href = "";
   }
 
@@ -211,7 +218,7 @@ export class FormWizardContainer {
         //close modal after 15 seconds (unless user clicks on it again
         setTimeout(() => {
           this.returnToStart();
-        }, 15000)
+        }, 10000)
       } else {
         alert("could not save data")
       }
@@ -243,7 +250,7 @@ export class FormWizardContainer {
   }
 
   /**
-   * custom toggle keyboard function because i need to manage a state to triger animations
+   * custom toggle keyboard function because I need to manage a state to trigger animations
    * @param touchKeyboard
    */
   customToggleKeyboard(touchKeyboard: NgxTouchKeyboardDirective) {
@@ -263,14 +270,35 @@ export class FormWizardContainer {
     return null;
   }
 
-  submitPlayerInfosForm() {
+  submitPlayerInfosForm(teamId: any) {
     if (this.playerInfosForm.valid) {
+      //add players infos into team object under .players
+      let index = this.teams.findIndex(team => team.id === teamId);
+
+      for (let i = 0; i < this.teams[index].nbPlayer; i++) {
+        let playerIndex = i + 1;
+        this.teams[index].players[i].age = this.getPlayerInfosFormValue('ageplayer', playerIndex);
+        this.teams[index].players[i].gender = this.getPlayerInfosFormValue('genderplayer', playerIndex);
+      }
+
+      //reset the form for next team
       this.playerInfosForm.reset();
     }
   }
 
   getPlayerInfosFormValue(formControlName: string, playerId: number) {
     return this.playerInfosForm.value[formControlName + playerId];
+  }
+
+  uncheckPlayerGender(inputId: string, elem: any) {
+    let targetElemId = elem.target.id;
+
+    if(this.playerInfosForm.controls[inputId].value && this.previousLabelTarget === targetElemId) {
+      this.playerInfosForm.controls[inputId].setValue(null);
+      this.playerInfosForm.controls[inputId].updateValueAndValidity();
+    }
+
+    this.previousLabelTarget = targetElemId;
   }
 }
 

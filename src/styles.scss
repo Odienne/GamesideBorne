@@ -130,14 +130,12 @@ html, body {
   justify-content: center;
   align-items: center;
 
-  background-position: center;
-  transition: background 0.8s;
+  transition: transform 0.3s;
 
   /* Ripple effect */
   &:active {
-    background-color: #85D659;
-    background-size: 100%;
-    transition: background 0s;
+    background-color: #568c3a;
+    transform: scale(0.9);
   }
 
   &.no-margin {
@@ -146,23 +144,11 @@ html, body {
 
   &.white-btn {
     background: white;
-
-    &:active {
-      background-color: rgba(234, 234, 234, 0.6);
-      background-size: 100%;
-      transition: background 0s;
-    }
   }
 
   &:disabled {
     background: #141a26;
     color: #2f3347;
-
-    &:active {
-      background-color: rgba(20, 26, 38, 0.6);
-      background-size: 100%;
-      transition: background 0s;
-    }
   }
 }
 
@@ -241,25 +227,22 @@ html, body {
   -webkit-backdrop-filter: blur(5.5px) !important;
 }
 
-ngx-touch-keyboard {
-  padding: 2rem 1rem !important;
-}
-
 .touch-keyboard .touch-keyboard-row {
   height: 22%;
 }
+
 .touch-keyboard .touch-keyboard-key {
   font-size: 21px !important;
 }
 
 .cancel-btn {
   position: absolute;
-  top: 220px;
+  top: 200px;
   right: 0;
   cursor: pointer;
 
-  height: 60px;
-  width: 70px;
+  height: 50px;
+  width: 60px;
   background: #b41f1f;
 
   outline: 0;
@@ -270,7 +253,7 @@ ngx-touch-keyboard {
   z-index: 9;
 
   img {
-    width: 22px;
+    width: 18px;
     position: relative;
     left: -6px;
   }
@@ -296,7 +279,7 @@ ngx-touch-keyboard {
 .modal {
   position: absolute;
   z-index: 10;
-  top: 120px;
+  top: 160px;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   width: 100%;
@@ -472,7 +455,9 @@ ngx-touch-keyboard {
   -webkit-animation-name: slideInUp;
   animation-name: slideInUp;
   animation-direction: alternate;
-
+  padding: 2rem 1rem !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
 .touch-keyboard {
@@ -499,7 +484,7 @@ ngx-touch-keyboard {
   position: relative;
 
   &.animated-padding-for-keyboard {
-    margin-top: -180px !important;
+    margin-top: -100px !important;
   }
 }
 
@@ -553,6 +538,12 @@ header {
     cursor: pointer;
     position: relative;
     right: 6px;
+    transition: transform 0.3s, box-shadow 0.3s;
+
+
+    &:active {
+      transform: scale(0.9);
+    }
   }
 
   .next-btn {
@@ -564,9 +555,13 @@ header {
     cursor: pointer;
     position: relative;
     left: 6px;
+    transition: transform 0.3s, box-shadow 0.3s;
+
+    &:active {
+      transform: scale(0.9);
+    }
   }
 }
-
 
 
 //forms
@@ -586,7 +581,41 @@ form .ng-invalid.ng-touched {
 .mb {
   margin-bottom: 120px;
 }
+
 .flex-justify-center {
   justify-content: center;
 }
 
+//animations
+.scale-up-bounce {
+  animation: scale-up-bounce 0.5s ease-in;
+}
+.scale-down-bounce {
+  animation: scale-down-bounce 0.5s ease-in;
+}
+@keyframes scale-bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+}
+
+@keyframes scale-up-bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes scale-down-bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.8);
+  }
+}
