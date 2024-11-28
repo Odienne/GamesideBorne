@@ -183,7 +183,7 @@
 
           <div class="players-infos-container flex-wrap">
             <div class="player-infos" *ngFor="let player of team.players; index as j">
-              <div class="flex-container">
+              <div class="player-infos-container">
                 <p class="step-subtitle bigger bold">{{ "player" | translate }} {{ j + 1 }}</p>
 
                 <div class="flex-row gender-container label-container flex-wrap">
@@ -260,8 +260,7 @@
     <cdk-step [stepControl]="scanTeamForm">
       <form [formGroup]="scanTeamForm" class="custom-form step-container animate__animated {{animationClass}}   ">
         <div class="step-content">
-          <h1 class="group-name-title green">{{ form.value.groupName }}
-          </h1>
+          <h1 class="group-name-title green">{{ form.value.groupName }}</h1>
           <h2 class="step-title"><span class="ft-gotham-black">{{ team.id }}</span> {{ teamDetailsForm.value.teamName }}
           </h2>
 
@@ -290,8 +289,7 @@
           <div class="modal-content modal-green">
 
             <div class="modal-header">
-              <p class="group-name-title white">{{ form.value.groupName }}
-              </p>
+              <p class="group-name-title white">{{ form.value.groupName }}</p>
               <p class="modal-title m-b"
                  [innerHTML]="teamIsReadyTranslation(team.id, teamDetailsForm.value.teamName)"></p>
 

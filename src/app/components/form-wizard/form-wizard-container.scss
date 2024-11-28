@@ -53,6 +53,14 @@
   }
 }
 
+.player-infos-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .group-name-title {
 
   text-align: center;
