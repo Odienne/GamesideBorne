@@ -7,6 +7,8 @@ import {NgxTouchKeyboardDirective, NgxTouchKeyboardModule} from 'ngx-touch-keybo
 import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
 import {MatStep, MatStepperModule} from "@angular/material/stepper";
 import {ReservationService} from "../../services/reservation.service";
+import {AnimationOptions, LottieComponent} from "ngx-lottie";
+import {AnimationItem} from "lottie-web";
 
 @Component({
   selector: 'form-wizard-container',
@@ -17,13 +19,14 @@ import {ReservationService} from "../../services/reservation.service";
     CdkStepperModule, ReactiveFormsModule,
     NgIf, NgForOf, NgxTouchKeyboardModule, TranslateModule, LangSelectionComponent, MatStep,
     MatStepperModule,
-    ReactiveFormsModule, NgOptimizedImage,
+    ReactiveFormsModule, NgOptimizedImage, LottieComponent,
   ],
 })
 export class FormWizardContainer {
-  form!: FormGroup;
-  teamDetailsForm!: FormGroup;
-  playerInfosForm!: FormGroup;
+  form!: FormGroup; //first form to retrieve nbTeams and groupName
+  teamDetailsForm!: FormGroup; //second form to retrieve team details (nbPlayers, teamName, email)
+  playerInfosForm!: FormGroup; //third form to retrieve player infos (gender,age)
+  scanTeamForm!: FormGroup; //hidden form to save and retrieve whether the team has scanned its badge
   nbTeams = 0;
   maxTeams = 99;
   isKeyboardOpen: boolean = false;
@@ -62,6 +65,10 @@ export class FormWizardContainer {
       playersInfos: []
     });
 
+    this.scanTeamForm = this.fb.group({
+      scanned: [false]
+    })
+
     this.playerInfosForm = this.fb.group({});
   }
 
@@ -78,6 +85,15 @@ export class FormWizardContainer {
       this.firstAnimationClass = this.animationClass;
     } else if ($event.name === "next") {
       this.animationClass = "animate__slideInRight";
+    } else if ($event.name === "next-header") {
+      this.animationClass = "animate__slideInRight";
+
+      let form = document.querySelector("form") as HTMLFormElement;
+      let btn = document.querySelector(".valid-btn") as HTMLButtonElement;
+
+      if (form.checkValidity()) {
+        btn.click();
+      }
     }
   }
 
@@ -200,7 +216,6 @@ export class FormWizardContainer {
       for (let i = 0; i < this.teamDetailsForm.value.nbPlayer; i++) {
         this.teams[index].players.push({age: null, gender: null}); //to iterate on it in template
 
-        //also need to manually add a formControl for each player
         this.playerInfosForm.addControl('ageplayer' + (i + 1), this.fb.control(null));
         this.playerInfosForm.addControl('genderplayer' + (i + 1), this.fb.control(null));
       }
@@ -247,7 +262,7 @@ export class FormWizardContainer {
         //close modal after 15 seconds (unless user clicks on it again
         setTimeout(() => {
           this.returnToStart();
-        }, 10000)
+        }, 12000)
       } else {
         alert("could not save data")
       }
@@ -276,6 +291,11 @@ export class FormWizardContainer {
       teamId: id,
       teamName: teamName,
     })
+  }
+
+  headToYourGameMasterTranslation() {
+    if (this.nbTeams > 1) return this.translate.instant('your-teams-are-ready');
+    return this.translate.instant('your-team-is-ready');
   }
 
   /**
@@ -332,6 +352,17 @@ export class FormWizardContainer {
 
   protected readonly clearInterval = clearInterval;
 
+  submitScanTeamForm() {
+    if (this.scanTeamForm.valid) {
+      this.toggleCheckedModal();
+    }
+  }
+
+  options: AnimationOptions = {
+    path: '/assets/animations/scan.json',
+    loop: true,
+    autoplay: true
+  };
 }
 
 @Component({
@@ -349,17 +380,25 @@ export class FormWizard extends CdkStepper {
   fadeOutModalClass: string = "";
 
   override previous() {
-    console.log('going back');
-    console.log(this.selectedIndex)
     this.messageEvent.emit({name: "prev", value: null});
     super.previous();
   }
 
+  /**
+   * default next behavior, with event emitter added
+   */
   override next() {
-    console.log('going next');
-    console.log(this.selectedIndex)
     this.messageEvent.emit({name: "next", value: null});
     super.next();
+  }
+
+  /**
+   * I also need a custom next function that sends a different event
+   * It will only be used by the next btn in header
+   * The event will submit click on the validate btn if form is valid, thus going to next step
+   */
+  customNext() {
+    this.messageEvent.emit({name: "next-header", value: null});
   }
 
   selectStepByIndex(index: number): void {

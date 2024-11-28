@@ -2,10 +2,11 @@
   <cdk-step [stepControl]="form">
     <form [formGroup]="form" (ngSubmit)="submitForm()"
           class="custom-form step-container
-      animate__animated {{ firstAnimationClass }} {{ isKeyboardOpen ? 'animated-padding-for-keyboard' : '' }}">
+      animate__animated {{ firstAnimationClass }}">
 
       <div class="step-content" style="height: 580px">
         <h1 class="step-title">{{ "nb-team-in-group-title" | translate }}</h1>
+        <p class="step-subtitle">{{ "2-5-players-per-team" | translate }}</p>
 
         <div class="manage-nbTeams-container">
           <div class="btn-update-nbTeams">
@@ -26,6 +27,8 @@
             </button>
           </div>
         </div>
+
+        <input type="number" hidden name="nbTeams" formControlName="nbTeams" required min="1" max="{{maxTeams}}">
 
         <div class="flex-container animate__animated" *ngIf="nbTeams > 1">
           <input class="custom-text-input animate__animated"
@@ -53,7 +56,7 @@
         </div>
       </div>
 
-      <div class="validation-container">
+      <div class="validation-container {{ isKeyboardOpen ? 'animated-padding-for-keyboard' : '' }}">
         <button class="valid-btn" cdkStepperNext [disabled]="!this.form.valid">
           {{ "valid-btn" | translate }}
         </button>
@@ -66,10 +69,12 @@
     <cdk-step [stepControl]="teamDetailsForm">
       <form
         [formGroup]="teamDetailsForm" (ngSubmit)="submitTeamDetailsForm(team.id)"
-        class="custom-form step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
+        class="custom-form step-container animate__animated {{animationClass}}">
         <div class="step-content">
-          <h1 class="step-title">{{ "compose-your" | translate }} <span class="ft-gotham-black">{{ team.id }}</span>
+          <h1 class="group-name-title green">{{ form.value.groupName }}
           </h1>
+          <h2 class="step-title">{{ "create-your" | translate }} <span class="ft-gotham-black">{{ team.id }}</span>
+          </h2>
 
           <div class="flex-container">
             <div class="mb-big">
@@ -159,7 +164,7 @@
           </div>
         </div>
 
-        <div class="validation-container">
+        <div class="validation-container {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
           <button class="valid-btn" cdkStepperNext [disabled]="teamDetailsForm.invalid">
             {{ "valid-btn" | translate }}
           </button>
@@ -170,77 +175,79 @@
     <!--    get players infos-->
     <cdk-step>
       <form [formGroup]="playerInfosForm" (ngSubmit)="submitPlayerInfosForm(team.id)"
-            class="custom-form step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
+            class="custom-form step-container animate__animated {{animationClass}}">
         <div class="step-content">
-          <h1 class="step-title">{{ "provide-players-infos-title" | translate }}</h1>
+          <h1 class="group-name-title green">{{ form.value.groupName }}
+          </h1>
+          <h2 class="step-title">{{ "provide-players-infos-title" | translate }}</h2>
 
           <div class="players-infos-container flex-wrap">
-            <div class="player-infos" *ngFor="let player of team.players; index as i">
+            <div class="player-infos" *ngFor="let player of team.players; index as j">
               <div class="flex-container">
-                <p class="step-subtitle bigger bold">{{ "player" | translate }} {{ i + 1 }}</p>
+                <p class="step-subtitle bigger bold">{{ "player" | translate }} {{ j + 1 }}</p>
 
                 <div class="flex-row gender-container label-container flex-wrap">
                   <label
-                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'h'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
-                    for="genderH{{i}}">
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (j+1)) == 'h'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (j+1)) ? 'not-selected' : '' )}}"
+                    for="genderH{{j}}">
                     {{ "gender-male-label" | translate }}
                   </label>
                   <label
-                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'f'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
-                    for="genderF{{i}}">
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (j+1)) == 'f'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (j+1)) ? 'not-selected' : '' )}}"
+                    for="genderF{{j}}">
                     {{ "gender-female-label" | translate }}
                   </label>
                   <label
-                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'x'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
-                    for="genderX{{i}}">
+                    class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (j+1)) == 'x'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (j+1)) ? 'not-selected' : '' )}}"
+                    for="genderX{{j}}">
                     {{ "gender-other-label" | translate }}
                   </label>
                 </div>
 
                 <div class="label-container flex-justify-center">
                   <label
-                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '-11' ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
-                    for="ageRange2{{i}}">
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (j+1)) == '-11' ? 'selected' : (getPlayerInfosFormValue('ageplayer', (j+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange2{{j}}">
                     -11
                   </label>
                   <label
-                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '11-17'  ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
-                    for="ageRange3{{i}}">
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (j+1)) == '11-17'  ? 'selected' : (getPlayerInfosFormValue('ageplayer', (j+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange3{{j}}">
                     11-17
                   </label>
                   <label
-                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) ==  '18-25' ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
-                    for="ageRange4{{i}}">
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (j+1)) ==  '18-25' ? 'selected' : (getPlayerInfosFormValue('ageplayer', (j+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange4{{j}}">
                     18-25
                   </label>
                   <label
-                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (i+1)) == '25+'  ? 'selected' : (getPlayerInfosFormValue('ageplayer', (i+1)) ? 'not-selected' : '' )}}"
-                    for="ageRange5{{i}}">
+                    class="player-age-label {{getPlayerInfosFormValue('ageplayer', (j+1)) == '25+'  ? 'selected' : (getPlayerInfosFormValue('ageplayer', (j+1)) ? 'not-selected' : '' )}}"
+                    for="ageRange5{{j}}">
                     25+
                   </label>
                 </div>
 
-                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange2{{i}}" hidden
-                       formControlName="ageplayer{{i+1}}" type="radio" value="-11">
-                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange3{{i}}" hidden
-                       formControlName="ageplayer{{i+1}}" type="radio" value="11-17">
-                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange4{{i}}" hidden
-                       formControlName="ageplayer{{i+1}}" type="radio" value="18-25">
-                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange5{{i}}" hidden
-                       formControlName="ageplayer{{i+1}}" type="radio" value="25+">
+                <input (click)="uncheckPlayerGender('ageplayer' + (j+1), $event)" id="ageRange2{{j}}" hidden
+                       formControlName="ageplayer{{j+1}}" type="radio" value="-11">
+                <input (click)="uncheckPlayerGender('ageplayer' + (j+1), $event)" id="ageRange3{{j}}" hidden
+                       formControlName="ageplayer{{j+1}}" type="radio" value="11-17">
+                <input (click)="uncheckPlayerGender('ageplayer' + (j+1), $event)" id="ageRange4{{j}}" hidden
+                       formControlName="ageplayer{{j+1}}" type="radio" value="18-25">
+                <input (click)="uncheckPlayerGender('ageplayer' + (j+1), $event)" id="ageRange5{{j}}" hidden
+                       formControlName="ageplayer{{j+1}}" type="radio" value="25+">
 
-                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderH{{i}}" hidden
-                       formControlName="genderplayer{{i+1}}" type="radio" value="h">
-                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderF{{i}}" hidden
-                       formControlName="genderplayer{{i+1}}" type="radio" value="f">
-                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderX{{i}}" hidden
-                       formControlName="genderplayer{{i+1}}" type="radio" value="x">
+                <input (click)="uncheckPlayerGender('genderplayer' + (j+1), $event)" id="genderH{{j}}" hidden
+                       formControlName="genderplayer{{j+1}}" type="radio" value="h">
+                <input (click)="uncheckPlayerGender('genderplayer' + (j+1), $event)" id="genderF{{j}}" hidden
+                       formControlName="genderplayer{{j+1}}" type="radio" value="f">
+                <input (click)="uncheckPlayerGender('genderplayer' + (j+1), $event)" id="genderX{{j}}" hidden
+                       formControlName="genderplayer{{j+1}}" type="radio" value="x">
               </div>
             </div>
           </div>
         </div>
 
-        <div class="validation-container">
+        <div class="validation-container {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
           <button class="valid-btn" cdkStepperNext [disabled]="playerInfosForm.invalid">
             {{ "valid-btn" | translate }}
           </button>
@@ -250,35 +257,50 @@
 
 
     <!--    scan team tag-->
-    <cdk-step [stepControl]="teamDetailsForm">
-      <div class="custom-form step-container animate__animated {{animationClass}}   ">
+    <cdk-step [stepControl]="scanTeamForm">
+      <form [formGroup]="scanTeamForm" class="custom-form step-container animate__animated {{animationClass}}   ">
         <div class="step-content">
-          <h1 class="step-title"><span class="ft-gotham-black">{{ team.id }}</span> {{ teamDetailsForm.value.teamName }}
+          <h1 class="group-name-title green">{{ form.value.groupName }}
           </h1>
+          <h2 class="step-title"><span class="ft-gotham-black">{{ team.id }}</span> {{ teamDetailsForm.value.teamName }}
+          </h2>
 
           <p class="step-subtitle">{{ "please-scan-device" | translate }}</p>
+
+          <div class="flex-container">
+            <ng-lottie
+              [options]="options"
+              width="500px"
+              height="500px"
+            />
+          </div>
+
+          <input type="text" hidden formControlName="scanned">
         </div>
 
         <div class="validation-container">
-          <button class="valid-btn" (click)="toggleCheckedModal()">
+          <button class="valid-btn" (click)="submitScanTeamForm()">
             {{ "valid-btn" | translate }}
           </button>
         </div>
-      </div>
+      </form>
 
       <div class="modal animate__animated animate__bounceInDown {{fadeOutModalClass}}" *ngIf="checkedModalVisibility">
         <div class="modal-container">
           <div class="modal-content modal-green">
-          <span (click)="toggleCheckedModal()">
-          <img class="icon info" src="./assets/icons/close_modal.svg" alt="">
-          </span>
+
             <div class="modal-header">
+              <p class="group-name-title white">{{ form.value.groupName }}
+              </p>
               <p class="modal-title m-b"
                  [innerHTML]="teamIsReadyTranslation(team.id, teamDetailsForm.value.teamName)"></p>
 
+              <p *ngIf="!allTeamAreCompleted()"
+                 class="modal-final-title italic">{{ "create-your-next-team" | translate }}</p>
+
               <div *ngIf="allTeamAreCompleted()">
                 <p
-                  class="modal-final-title">{{ form.value.groupName ?? teamDetailsForm.value.teamName }} {{ "your-teams-are-ready" | translate }}</p>
+                  class="modal-final-title"><span [innerHTML]="headToYourGameMasterTranslation()"></span></p>
               </div>
             </div>
 
