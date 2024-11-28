@@ -189,6 +189,10 @@ export class FormWizardContainer {
       this.teamDetailsForm.reset();
       this.teams = [];
 
+      //ideally I want to push new teams to this.teams array depending on the number of teams declared in the first form
+      //I would pop this.teams as well
+      //depending on the difference between this.teams.length and this.form.value.nbTeams
+
       for (let i = 0; i < this.form.value.nbTeams; i++) {
         this.teams.push({id: this.translate.instant("team") + " " + (i + 1), name: ""});
       }
@@ -210,7 +214,7 @@ export class FormWizardContainer {
       //reset array (in case you go back it would push more and more players)
       this.teams[index].players = [];
 
-      //reset formControls of formGroup
+      //reset formControls of formGroup //todo change here
       this.playerInfosForm = this.fb.group({});
 
       for (let i = 0; i < this.teamDetailsForm.value.nbPlayer; i++) {
@@ -269,6 +273,11 @@ export class FormWizardContainer {
     } else if (!this.checkedModalVisibility && this.allTeamAreCompleted()) { //if user press check or cancel
       this.returnToStart();
     }
+
+    //reset forms when closing the modal
+    if (!this.checkedModalVisibility) {
+      this.resetForms();
+    }
   }
 
   /**
@@ -280,6 +289,12 @@ export class FormWizardContainer {
     return true;
   }
 
+  resetForms() {
+    //we can reset teamDetailsForm here, as well as playerInfosForm
+    //because we will not go back to edit previous team
+    this.teamDetailsForm.reset();
+    this.playerInfosForm.reset();
+  }
 
   /**
    * quick translation for template
@@ -329,9 +344,6 @@ export class FormWizardContainer {
         this.teams[index].players[i].age = this.getPlayerInfosFormValue('ageplayer', playerIndex);
         this.teams[index].players[i].gender = this.getPlayerInfosFormValue('genderplayer', playerIndex);
       }
-
-      //reset the form for next team
-      this.playerInfosForm.reset();
     }
   }
 
@@ -349,8 +361,6 @@ export class FormWizardContainer {
 
     this.previousLabelTarget = targetElemId;
   }
-
-  protected readonly clearInterval = clearInterval;
 
   submitScanTeamForm() {
     if (this.scanTeamForm.valid) {
