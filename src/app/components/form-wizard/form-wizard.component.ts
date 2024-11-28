@@ -38,6 +38,10 @@ export class FormWizardContainer {
   fadeOutModalClass: string = "";
 
   previousLabelTarget: string = '';
+  intervalId: any = null;
+  intervalVelocityInitialValue = 500
+  intervalVelocity: number = this.intervalVelocityInitialValue;
+  intervalVelocityCap = 200;
 
   constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService, private reservationService: ReservationService) {
   }
@@ -53,7 +57,7 @@ export class FormWizardContainer {
     });
     this.teamDetailsForm = this.fb.group({
       teamName: ["", [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-      teamEmail: ["", [Validators.required, Validators.email, Validators.maxLength(80)]],
+      teamEmail: ["", [Validators.email, Validators.maxLength(80)]],
       nbPlayer: [null, [Validators.required, Validators.min(2), Validators.max(5)]],
       playersInfos: []
     });
@@ -90,7 +94,7 @@ export class FormWizardContainer {
     this.form.controls['nbTeams'].setValue(this.nbTeams);
 
     this.updateGroupNameValidators();
-  }
+  };
 
   /**
    * related to the first form, decrease nbTeams by 1
@@ -107,20 +111,45 @@ export class FormWizardContainer {
     this.updateGroupNameValidators();
   }
 
+  /**
+   * Interval used to increase or decrease nbTeams, with an increasing velocity the longer you press
+   * @param action
+   * @param speed
+   */
+  startInterval(action: string, speed = this.intervalVelocity) {
+    if (!this.intervalId) {
+      this.intervalId = setInterval(() => {
+        action === "add" ? this.addOneTeam() : this.minusOneTeam();
+        this.clearAddMinusInterval();
+        let newVelocity = speed * 0.82 > this.intervalVelocityCap ? speed * 0.82 : this.intervalVelocityCap;
+        this.startInterval(action, newVelocity)
+      }, speed);
+    }
+  }
+
+  /**
+   * Clear the interval declared in startInterval
+   */
+  clearAddMinusInterval() {
+    clearInterval(this.intervalId)
+    this.intervalId = null;
+    this.intervalVelocity = this.intervalVelocityInitialValue;
+  }
+
   updateNbTeamsAnimationClass(animation = "scale-up-bounce") {
     this.nbTeamsAnimationClass = animation;
     setTimeout(() => {
       this.nbTeamsAnimationClass = "";
-    }, 500)
+    }, 500);
   }
 
   /**
-   * check whether I need to display
+   * check whether I need to display groupeName field
    */
   updateGroupNameValidators() {
     if (this.nbTeams > 1) {
       this.form.controls['groupName'].setValidators([
-        Validators.required,
+        // Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50)
       ]);
@@ -293,13 +322,16 @@ export class FormWizardContainer {
   uncheckPlayerGender(inputId: string, elem: any) {
     let targetElemId = elem.target.id;
 
-    if(this.playerInfosForm.controls[inputId].value && this.previousLabelTarget === targetElemId) {
+    if (this.playerInfosForm.controls[inputId].value && this.previousLabelTarget === targetElemId) {
       this.playerInfosForm.controls[inputId].setValue(null);
       this.playerInfosForm.controls[inputId].updateValueAndValidity();
     }
 
     this.previousLabelTarget = targetElemId;
   }
+
+  protected readonly clearInterval = clearInterval;
+
 }
 
 @Component({

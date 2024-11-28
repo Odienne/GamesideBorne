@@ -588,10 +588,10 @@ form .ng-invalid.ng-touched {
 
 //animations
 .scale-up-bounce {
-  animation: scale-up-bounce 0.5s ease-in;
+  animation: scale-up-bounce 0.2s ease-in;
 }
 .scale-down-bounce {
-  animation: scale-down-bounce 0.5s ease-in;
+  animation: scale-down-bounce 0.2s ease-in;
 }
 @keyframes scale-bounce {
   0% {

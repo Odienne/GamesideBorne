@@ -9,7 +9,8 @@
 
         <div class="manage-nbTeams-container">
           <div class="btn-update-nbTeams">
-            <button (click)="minusOneTeam()">
+            <button (click)="minusOneTeam()" (touchstart)="startInterval('minus')" (touchend)="clearAddMinusInterval()"
+            >
               <img class="icon minus" ngSrc="./assets/icons/minus.svg" width="60" height="60" alt="">
             </button>
           </div>
@@ -19,7 +20,8 @@
             </span>
           </div>
           <div class="btn-update-nbTeams">
-            <button (click)="addOneTeam()">
+            <button (click)="addOneTeam()" (touchstart)="startInterval('add')" (touchend)="clearAddMinusInterval()"
+            >
               <img class="icon plus" ngSrc="./assets/icons/plus.svg" width="60" height="60" alt="">
             </button>
           </div>
@@ -27,7 +29,7 @@
 
         <div class="flex-container animate__animated" *ngIf="nbTeams > 1">
           <input class="custom-text-input animate__animated"
-                 required type="text" formControlName="groupName"
+                 type="text" formControlName="groupName"
                  placeholder="{{'group-name-placeholder' | translate}}"
                  ngxTouchKeyboard
                  ngxTouchKeyboardFullScreen
@@ -76,37 +78,37 @@
               <div class="flex-row label-container">
                 <label
                   class="nb-player-label {{teamDetailsForm.value.nbPlayer == 2 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
-                  for="nbPlayer2">
+                  for="nbPlayer2{{i}}">
                   2
                 </label>
                 <label
                   class="nb-player-label {{teamDetailsForm.value.nbPlayer == 3 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
-                  for="nbPlayer3">
+                  for="nbPlayer3{{i}}">
                   3
                 </label>
                 <label
                   class="nb-player-label {{teamDetailsForm.value.nbPlayer == 4 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
-                  for="nbPlayer4">
+                  for="nbPlayer4{{i}}">
                   4
                 </label>
                 <label
                   class="nb-player-label {{teamDetailsForm.value.nbPlayer == 5 ? 'selected' : (teamDetailsForm.value.nbPlayer ? 'not-selected' : '')}}"
-                  for="nbPlayer5">
+                  for="nbPlayer5{{i}}">
                   5
                 </label>
               </div>
             </div>
 
-            <input id="nbPlayer2" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="2">
-            <input id="nbPlayer3" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="3">
-            <input id="nbPlayer4" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="4">
-            <input id="nbPlayer5" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="5">
+            <input id="nbPlayer2{{i}}" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="2">
+            <input id="nbPlayer3{{i}}" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="3">
+            <input id="nbPlayer4{{i}}" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="4">
+            <input id="nbPlayer5{{i}}" hidden name="nbPlayer" formControlName="nbPlayer" type="radio" value="5">
 
             <!--errors display for nb players-->
             <div class="input-error animate__animated animate__headShake">
               <p *ngIf="formErrors(teamDetailsForm.get('nbPlayer'))?.required"
                  class="error-text animate__animated animate__headShake">
-                {{"team-nb-player-required-error" | translate}}
+                {{ "team-nb-player-required-error" | translate }}
               </p>
             </div>
 
@@ -125,17 +127,16 @@
             <div class="input-error animate__animated animate__headShake">
               <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.minlength"
                  class="error-text animate__animated animate__headShake">
-                {{"team-name-length-error" | translate}}
+                {{ "team-name-length-error" | translate }}
               </p>
               <p *ngIf="formErrors(teamDetailsForm.get('teamName'))?.required"
                  class="error-text animate__animated animate__headShake">
-                {{"team-name-required-error" | translate}}
+                {{ "team-name-required-error" | translate }}
               </p>
             </div>
 
             <input class="custom-text-input" type="text" formControlName="teamEmail"
                    placeholder="{{'team-email-placeholder' | translate}}"
-                   required
                    ngxTouchKeyboard
                    ngxTouchKeyboardFullScreen
                    inputmode='email'
@@ -148,11 +149,11 @@
             <div class="input-error animate__animated animate__headShake">
               <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.email"
                  class="error-text animate__animated animate__headShake">
-                {{"team-email-invalid-error" | translate}}
+                {{ "team-email-invalid-error" | translate }}
               </p>
               <p *ngIf="formErrors(teamDetailsForm.get('teamEmail'))?.required"
                  class="error-text animate__animated animate__headShake">
-                {{"team-email-required-error" | translate}}
+                {{ "team-email-required-error" | translate }}
               </p>
             </div>
           </div>
@@ -171,28 +172,28 @@
       <form [formGroup]="playerInfosForm" (ngSubmit)="submitPlayerInfosForm(team.id)"
             class="custom-form step-container animate__animated {{animationClass}} {{isKeyboardOpen ? 'animated-padding-for-keyboard' : ''}}">
         <div class="step-content">
-          <h1 class="step-title">{{"provide-players-infos-title" | translate}}</h1>
+          <h1 class="step-title">{{ "provide-players-infos-title" | translate }}</h1>
 
           <div class="players-infos-container flex-wrap">
             <div class="player-infos" *ngFor="let player of team.players; index as i">
               <div class="flex-container">
-                <p class="step-subtitle bigger bold">{{"player" | translate}} {{ i + 1 }}</p>
+                <p class="step-subtitle bigger bold">{{ "player" | translate }} {{ i + 1 }}</p>
 
                 <div class="flex-row gender-container label-container flex-wrap">
                   <label
                     class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'h'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
                     for="genderH{{i}}">
-                    {{"gender-male-label" | translate}}
+                    {{ "gender-male-label" | translate }}
                   </label>
                   <label
                     class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'f'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
                     for="genderF{{i}}">
-                    {{"gender-female-label" | translate}}
+                    {{ "gender-female-label" | translate }}
                   </label>
                   <label
                     class="player-gender-label {{getPlayerInfosFormValue('genderplayer', (i+1)) == 'x'  ? 'selected' : (getPlayerInfosFormValue('genderplayer', (i+1)) ? 'not-selected' : '' )}}"
                     for="genderX{{i}}">
-                    {{"gender-other-label" | translate}}
+                    {{ "gender-other-label" | translate }}
                   </label>
                 </div>
 
@@ -219,14 +220,21 @@
                   </label>
                 </div>
 
-                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange2{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="-11">
-                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange3{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="11-17">
-                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange4{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="18-25">
-                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange5{{i}}" hidden formControlName="ageplayer{{i+1}}" type="radio" value="25+">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange2{{i}}" hidden
+                       formControlName="ageplayer{{i+1}}" type="radio" value="-11">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange3{{i}}" hidden
+                       formControlName="ageplayer{{i+1}}" type="radio" value="11-17">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange4{{i}}" hidden
+                       formControlName="ageplayer{{i+1}}" type="radio" value="18-25">
+                <input (click)="uncheckPlayerGender('ageplayer' + (i+1), $event)" id="ageRange5{{i}}" hidden
+                       formControlName="ageplayer{{i+1}}" type="radio" value="25+">
 
-                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderH{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="h">
-                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderF{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="f">
-                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderX{{i}}" hidden formControlName="genderplayer{{i+1}}" type="radio" value="x">
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderH{{i}}" hidden
+                       formControlName="genderplayer{{i+1}}" type="radio" value="h">
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderF{{i}}" hidden
+                       formControlName="genderplayer{{i+1}}" type="radio" value="f">
+                <input (click)="uncheckPlayerGender('genderplayer' + (i+1), $event)" id="genderX{{i}}" hidden
+                       formControlName="genderplayer{{i+1}}" type="radio" value="x">
               </div>
             </div>
           </div>

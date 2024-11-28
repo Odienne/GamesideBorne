@@ -2,7 +2,7 @@
   "valid-btn": "Valider",
   "cancel-current-modal-title": "Voulez-vous annuler l'enregistrement en cours ?",
   "nb-team-in-group-title": "Combien d'équipes dans votre groupe ?",
-  "group-name-placeholder": "Nom du groupe (ex: Anniversaire Maxime, EVJF Marie...)",
+  "group-name-placeholder": "Nom du groupe (optionnel)",
   "choose-gamemode-title": "Choississez votre mode de jeu",
   "classic-gamemode-title": "Mode de jeu classique",
   "halloween-gamemode-title": "Mode de jeu Halloween",
