@@ -408,7 +408,7 @@ export class FormWizardContainer {
   options: AnimationOptions = {
     path: '/assets/animations/scanning.json',
     loop: true,
-    autoplay: true,
+    autoplay: false,
   };
 
   animationCreated(animationItem: AnimationItem) {
