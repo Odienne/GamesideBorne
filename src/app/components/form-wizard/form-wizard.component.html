@@ -11,8 +11,8 @@
     </div>
 
     <div class="btn-container next-container">
-      <button cdkStepperNext
-              class="next-btn">
+      <button (click)="customNext()"
+              class="next-btn" [disabled]="shouldNextBtnBeDisabled()">
         <img src="./assets/icons/next.svg" alt="">
       </button>
     </div>
