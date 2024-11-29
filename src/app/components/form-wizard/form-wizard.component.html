@@ -12,7 +12,7 @@
 
     <div class="btn-container next-container">
       <button (click)="customNext()"
-              class="next-btn">
+              class="next-btn" [disabled]="shouldNextBtnBeDisabled()">
         <img src="./assets/icons/next.svg" alt="">
       </button>
     </div>

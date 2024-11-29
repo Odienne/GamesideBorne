@@ -1,11 +1,9 @@
-import {ChangeDetectorRef, Component, EventEmitter, forwardRef, input, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Output} from '@angular/core';
 import {CdkStepper, CdkStepperModule} from '@angular/cdk/stepper';
 import {NgForOf, NgIf, NgOptimizedImage, NgTemplateOutlet} from '@angular/common';
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgxTouchKeyboardDirective, NgxTouchKeyboardModule} from 'ngx-touch-keyboard';
-import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
-import {MatStep, MatStepperModule} from "@angular/material/stepper";
 import {ReservationService} from "../../services/reservation.service";
 import {AnimationOptions, LottieComponent} from "ngx-lottie";
 import {AnimationItem} from "lottie-web";
@@ -17,8 +15,7 @@ import {AnimationItem} from "lottie-web";
   standalone: true,
   imports: [forwardRef(() => FormWizard),
     CdkStepperModule, ReactiveFormsModule,
-    NgIf, NgForOf, NgxTouchKeyboardModule, TranslateModule, LangSelectionComponent, MatStep,
-    MatStepperModule,
+    NgIf, NgForOf, NgxTouchKeyboardModule, TranslateModule,
     ReactiveFormsModule, NgOptimizedImage, LottieComponent,
   ],
 })
@@ -30,8 +27,10 @@ export class FormWizardContainer {
   nbTeams = 0;
   maxTeams = 99;
   isKeyboardOpen: boolean = false;
+  animationItem!: AnimationItem; //lottie scan animation item
 
-  teams: any[] = [{}]; // array of teams, used to iterate in template
+  teams: any[] = [{}]; // array of teams, used to iterate in template I need at least an empty object first to avoid double submit bug
+  currentTeamIndex: number = 0; // keep track of current edited team
   players: any[] = []; // contains player data such as age and gender, keyed by groupID and used to
   linearMode: boolean = true;
   checkedModalVisibility: boolean = false;
@@ -77,12 +76,20 @@ export class FormWizardContainer {
    * I use these events to update the animation class on stepContainer, making it slideFromLeft or slideFromRight giving it more fluidity
    * @param $event
    */
-  receiveMessage($event: { name: string, value: any }) {
+  receiveMessage($event: any) {
     if ($event.name === "returnToStart") {
       this.returnToStart();
     } else if ($event.name === "prev") {
-      this.animationClass = "animate__slideInLeft";
-      this.firstAnimationClass = this.animationClass;
+      let teamHasScanned = this.teams[this.currentTeamIndex].hasScanned;
+
+      if (!teamHasScanned){
+        //can call the callback (previous function)
+        //otherwise won't do anything
+        this.animationClass = "animate__slideInLeft";
+        this.firstAnimationClass = this.animationClass;
+
+        $event.value.callBackFunction();
+      }
     } else if ($event.name === "next") {
       this.animationClass = "animate__slideInRight";
     } else if ($event.name === "next-header") {
@@ -160,7 +167,7 @@ export class FormWizardContainer {
   }
 
   /**
-   * check whether I need to display groupeName field
+   * check whether I need to display groupName field
    */
   updateGroupNameValidators() {
     if (this.nbTeams > 1) {
@@ -184,17 +191,33 @@ export class FormWizardContainer {
    */
   submitForm() {
     if (this.form.valid) {
-      /*need to reset the form after each submit to avoid a bug*/
-      /*also need to reset other forms, otherwise coming back to this screen will cause a bug*/
-      this.teamDetailsForm.reset();
-      this.teams = [];
+
+      //necessary because array is init with an empty object [{}
+      if (Object.keys(this.teams[0]).length === 0) {
+        this.teams.splice(0, 1);
+      }
 
       //ideally I want to push new teams to this.teams array depending on the number of teams declared in the first form
       //I would pop this.teams as well
       //depending on the difference between this.teams.length and this.form.value.nbTeams
+      //if their are the same, nothing to change
+      let oldValue = this.teams.length;
+      let newValue = this.form.value.nbTeams;
 
-      for (let i = 0; i < this.form.value.nbTeams; i++) {
-        this.teams.push({id: this.translate.instant("team") + " " + (i + 1), name: ""});
+      if (newValue > oldValue) { //if we want more teams
+        for (let i = oldValue; i < newValue; i++) {
+          this.teams.push({
+            id: this.translate.instant("team") + " " + (i + 1),
+            name: "",
+            players: [],
+            email: "",
+            nbPlayer: 0
+          });
+        }
+      } else if (newValue < oldValue) { //we want fewer teams
+        for (let i = newValue; i < oldValue; i++) {
+          this.teams.pop();
+        }
       }
     }
   }
@@ -206,27 +229,34 @@ export class FormWizardContainer {
   submitTeamDetailsForm(id: any) {
     if (this.teamDetailsForm.valid) {
       let index = this.teams.findIndex(team => team.id === id);
+      this.currentTeamIndex = index;
       this.teams[index].name = this.teamDetailsForm.value.teamName;
       this.teams[index].email = this.teamDetailsForm.value.teamEmail;
-      this.teams[index].nbPlayer = this.teamDetailsForm.value.nbPlayer;
 
 
-      //reset array (in case you go back it would push more and more players)
-      this.teams[index].players = [];
+      let oldValue = this.teams[index].nbPlayer ?? 0;
+      let newValue = this.teamDetailsForm.value.nbPlayer;
 
-      //reset formControls of formGroup //todo change here
-      this.playerInfosForm = this.fb.group({});
+      //same logic as the submitForm method
+      if (newValue > oldValue) { //if we want more players
+        for (let i = oldValue; i < newValue; i++) {
+          //classic add
+          this.teams[index].players.push({age: null, gender: null}); //to iterate on it in template
 
-      for (let i = 0; i < this.teamDetailsForm.value.nbPlayer; i++) {
-        this.teams[index].players.push({age: null, gender: null}); //to iterate on it in template
-
-        this.playerInfosForm.addControl('ageplayer' + (i + 1), this.fb.control(null));
-        this.playerInfosForm.addControl('genderplayer' + (i + 1), this.fb.control(null));
+          this.playerInfosForm.addControl('ageplayer' + (i + 1), this.fb.control(null));
+          this.playerInfosForm.addControl('genderplayer' + (i + 1), this.fb.control(null));
+        }
+      } else if (newValue < oldValue) { //we want fewer players
+        for (let i = newValue; i < oldValue; i++) {
+          //remove last player and reset last controls corresponding to him
+          this.playerInfosForm.controls['ageplayer' + this.teams[index].players.length]?.reset();
+          this.playerInfosForm.controls['genderplayer' + this.teams[index].players.length]?.reset();
+          this.teams[index].players.pop();
+        }
       }
+      //now can update this value
+      this.teams[index].nbPlayer = this.teamDetailsForm.value.nbPlayer;
     }
-
-    //also reset nbPlayer
-    // this.teamDetailsForm.controls['nbPlayer'].setValue(null);
   }
 
 
@@ -344,6 +374,8 @@ export class FormWizardContainer {
         this.teams[index].players[i].age = this.getPlayerInfosFormValue('ageplayer', playerIndex);
         this.teams[index].players[i].gender = this.getPlayerInfosFormValue('genderplayer', playerIndex);
       }
+
+      this.animationItem.play();
     }
   }
 
@@ -362,17 +394,30 @@ export class FormWizardContainer {
     this.previousLabelTarget = targetElemId;
   }
 
-  submitScanTeamForm() {
+  submitScanTeamForm(teamIndex: number) {
     if (this.scanTeamForm.valid) {
       this.toggleCheckedModal();
+      this.animationItem.stop();
+      this.updateTeamScan(teamIndex);
     }
   }
 
+  updateTeamScan(teamIndex: number) {
+    console.log("TEAM SCAN")
+    console.log(this.teams[teamIndex])
+    this.teams[teamIndex].hasScanned = true;
+  }
+
   options: AnimationOptions = {
-    path: '/assets/animations/scan.json',
+    path: '/assets/animations/scanning.json',
     loop: true,
-    autoplay: true
+    autoplay: false,
   };
+
+  animationCreated(animationItem: AnimationItem) {
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.5);
+  }
 }
 
 @Component({
@@ -386,12 +431,13 @@ export class FormWizardContainer {
 export class FormWizard extends CdkStepper {
   @Output() messageEvent = new EventEmitter<{ name: string, value: any }>();
   cancelModalVisibility: boolean = false;
-  hideAnimationClass: string = "";
   fadeOutModalClass: string = "";
+  canClickCancelModal: boolean = true;
 
   override previous() {
-    this.messageEvent.emit({name: "prev", value: null});
-    super.previous();
+    this.messageEvent.emit({name: "prev", value: {callBackFunction: super.previous}});
+    //I let receiver check if it can previous()
+    // super.previous();
   }
 
   /**
@@ -417,7 +463,7 @@ export class FormWizard extends CdkStepper {
 
   goBack() {
     if (this.selectedIndex === 0) {
-      window.location.href = "/";
+      this.toggleCancelModal();
     } else {
       this.previous();
     }
@@ -428,15 +474,28 @@ export class FormWizard extends CdkStepper {
   }
 
   toggleCancelModal() {
-    //todo this is broken
-    this.fadeOutModalClass = "animate__bounceInDown";
-    if (this.cancelModalVisibility) {
-      this.fadeOutModalClass = "animate__bounceOutUp";
-      setTimeout(() => {
+    if (this.canClickCancelModal) {
+      this.canClickCancelModal = false;
+      setTimeout(() => { //can click again after 1s
+        this.canClickCancelModal = true;
+      }, 1000);
+
+      this.fadeOutModalClass = "animate__bounceInDown";
+      if (this.cancelModalVisibility) {
+        this.fadeOutModalClass = "animate__bounceOutUp";
+        setTimeout(() => {
+          this.cancelModalVisibility = !this.cancelModalVisibility;
+        }, 1000)
+      } else {
         this.cancelModalVisibility = !this.cancelModalVisibility;
-      }, 1000)
-    } else {
-      this.cancelModalVisibility = !this.cancelModalVisibility;
+      }
     }
+
+
+  }
+
+  shouldNextBtnBeDisabled() {
+    let currentForm = document.querySelector("form") as HTMLFormElement;
+    return !currentForm?.checkValidity();
   }
 }
