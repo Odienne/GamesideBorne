@@ -375,10 +375,6 @@ export class FormWizardContainer {
         this.teams[index].players[i].age = this.getPlayerInfosFormValue('ageplayer', playerIndex);
         this.teams[index].players[i].gender = this.getPlayerInfosFormValue('genderplayer', playerIndex);
       }
-
-      if (this.animationItem) {
-        this.animationItem.play();
-      }
     }
   }
 
@@ -406,20 +402,24 @@ export class FormWizardContainer {
   }
 
   updateTeamScan(teamIndex: number) {
-    console.log("TEAM SCAN")
-    console.log(this.teams[teamIndex])
     this.teams[teamIndex].hasScanned = true;
   }
 
   options: AnimationOptions = {
     path: '/assets/animations/scanning.json',
     loop: true,
-    autoplay: false,
+    autoplay: true,
   };
 
   animationCreated(animationItem: AnimationItem) {
     this.animationItem = animationItem;
     this.animationItem.setSpeed(1.5);
+
+    setTimeout(() => {
+      if (this.animationItem) {
+        this.animationItem.play();
+      }
+    }, 300)
   }
 }
 
