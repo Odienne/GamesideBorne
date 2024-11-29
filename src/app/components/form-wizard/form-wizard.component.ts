@@ -82,7 +82,7 @@ export class FormWizardContainer {
     } else if ($event.name === "prev") {
       let teamHasScanned = this.teams[this.currentTeamIndex].hasScanned;
 
-      if (!teamHasScanned){
+      if (teamHasScanned === false) {
         //can call the callback (previous function)
         //otherwise won't do anything
         this.animationClass = "animate__slideInLeft";
@@ -211,7 +211,8 @@ export class FormWizardContainer {
             name: "",
             players: [],
             email: "",
-            nbPlayer: 0
+            nbPlayer: 0,
+            hasScanned: false
           });
         }
       } else if (newValue < oldValue) { //we want fewer teams
@@ -267,7 +268,7 @@ export class FormWizardContainer {
     let allTeamAreCompleted = true;
 
     this.teams.forEach(team => {
-      if (team.name === "" || team.name === null) {
+      if (!team.hasScanned) {
         allTeamAreCompleted = false;
       }
     })
@@ -375,7 +376,9 @@ export class FormWizardContainer {
         this.teams[index].players[i].gender = this.getPlayerInfosFormValue('genderplayer', playerIndex);
       }
 
-      this.animationItem.play();
+      if (this.animationItem) {
+        this.animationItem.play();
+      }
     }
   }
 
@@ -435,7 +438,7 @@ export class FormWizard extends CdkStepper {
   canClickCancelModal: boolean = true;
 
   override previous() {
-    this.messageEvent.emit({name: "prev", value: {callBackFunction: super.previous}});
+    this.messageEvent.emit({name: "prev", value: {callBackFunction: () => super.previous()}});
     //I let receiver check if it can previous()
     // super.previous();
   }
