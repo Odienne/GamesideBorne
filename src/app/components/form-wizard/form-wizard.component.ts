@@ -375,6 +375,10 @@ export class FormWizardContainer {
         this.teams[index].players[i].age = this.getPlayerInfosFormValue('ageplayer', playerIndex);
         this.teams[index].players[i].gender = this.getPlayerInfosFormValue('genderplayer', playerIndex);
       }
+
+      if (this.animationItem) {
+        this.animationItem.play();
+      }
     }
   }
 
@@ -412,14 +416,8 @@ export class FormWizardContainer {
   };
 
   animationCreated(animationItem: AnimationItem) {
-    this.animationItem = animationItem;
-    this.animationItem.setSpeed(1.5);
-
-    setTimeout(() => {
-      if (this.animationItem) {
-        this.animationItem.play();
-      }
-    }, 300)
+      this.animationItem = animationItem;
+      this.animationItem.setSpeed(1.5);
   }
 }
 
