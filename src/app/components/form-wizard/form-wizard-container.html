@@ -1,6 +1,7 @@
 <form-wizard (messageEvent)="receiveMessage($event)" [linear]="linearMode">
   <cdk-step [stepControl]="form">
     <form [formGroup]="form" (ngSubmit)="submitForm()"
+          data-name="firstForm"
           class="custom-form step-container
       animate__animated {{ firstAnimationClass }}">
 
@@ -71,6 +72,7 @@
     <div *ngFor="let team of teams; index as i">
       <cdk-step [stepControl]="teamDetailsForm">
         <form
+          data-name="teamDetailsForm"
           [formGroup]="teamDetailsForm" (ngSubmit)="submitTeamDetailsForm(team.id)"
           class="custom-form step-container animate__animated {{animationClass}}">
           <div class="step-content">
@@ -178,6 +180,7 @@
       <!--    get players infos-->
       <cdk-step>
         <form [formGroup]="playerInfosForm" (ngSubmit)="submitPlayerInfosForm(team.id)"
+              data-name="playerInfosForm"
               class="custom-form step-container animate__animated {{animationClass}}">
           <div class="step-content">
             <h1 class="group-name-title green">{{ team.id }}
@@ -261,7 +264,7 @@
 
       <!--    scan team tag-->
       <cdk-step [stepControl]="scanTeamForm">
-        <form [formGroup]="scanTeamForm" class="custom-form step-container animate__animated {{animationClass}}   ">
+        <form [formGroup]="scanTeamForm" data-name="scanTeamForm" class="custom-form step-container animate__animated {{animationClass}}   ">
           <div class="step-content">
             <h1 class="group-name-title green">{{ form.value.groupName }}</h1>
             <h2 class="step-title"><span
@@ -270,7 +273,7 @@
 
             <p class="step-subtitle">{{ "please-scan-device" | translate }}</p>
 
-            <div class="flex-container">
+            <div class="flex-container" *ngIf="showAnimation">
               <ng-lottie
                 class="scan-lottie"
                 [options]="options"

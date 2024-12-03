@@ -28,6 +28,7 @@ export class FormWizardContainer {
   maxTeams = 99;
   isKeyboardOpen: boolean = false;
   animationItem!: AnimationItem; //lottie scan animation item
+  showAnimation: boolean = false; //used in template to display animation
 
   teams: any[] = [{}]; // array of teams, used to iterate in template I need at least an empty object first to avoid double submit bug
   currentTeamIndex: number = 0; // keep track of current edited team
@@ -37,14 +38,15 @@ export class FormWizardContainer {
   nbTeamsAnimationClass: string = "";
   animationClass: string = "animate__slideInRight";
   firstAnimationClass: string = "animate__fadeIn";
-  fadeOutModalClass: string = "";
 
+  fadeOutModalClass: string = "";
   previousLabelTarget: string = '';
   intervalId: any = null;
   intervalVelocityInitialValue = 500
   intervalVelocity: number = this.intervalVelocityInitialValue;
   intervalVelocityCap = 200;
   currentTag: any = null;
+  loopRequest: any;//intervalId used to check if a team has scanned its badge
 
   constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService, private reservationService: ReservationService) {
   }
@@ -81,16 +83,21 @@ export class FormWizardContainer {
     if ($event.name === "returnToStart") {
       this.returnToStart();
     } else if ($event.name === "prev") {
-      let teamHasScanned = this.teams[this.currentTeamIndex].hasScanned;
-
-      if (teamHasScanned === false) {
-        //can call the callback (previous function)
-        //otherwise won't do anything
-        this.animationClass = "animate__slideInLeft";
-        this.firstAnimationClass = this.animationClass;
-
-        $event.value.callBackFunction();
+      /*
+      can't go back if current team index > 0 (meaning more than one team)
+      it means we have scanned
+      */
+      let currentForm = document.querySelector("form") as HTMLFormElement;
+      if (this.currentTeamIndex > 0 && currentForm.dataset['name'] === "teamDetailsForm") {
+        return;
       }
+      //otherwise can call the callback function
+      this.animationClass = "animate__slideInLeft";
+      this.firstAnimationClass = this.animationClass;
+      //also break the request loop in case user goes back before scanning
+      clearInterval(this.loopRequest);
+
+      $event.value.callBackFunction();
     } else if ($event.name === "next") {
       this.animationClass = "animate__slideInRight";
     } else if ($event.name === "next-header") {
@@ -330,6 +337,12 @@ export class FormWizardContainer {
     //because we will not go back to edit previous team
     this.teamDetailsForm.reset();
     this.playerInfosForm.reset();
+
+    //cannot reset scanTeamForm here, otherwise it creates a bug in the step order
+
+    setTimeout(() => {
+      this.showAnimation = false;
+    }, 2000)
   }
 
   /**
@@ -382,11 +395,7 @@ export class FormWizardContainer {
       }
 
       //start the animation on next step
-      console.log(this.animationItem);
-      if (this.animationItem) {
-        console.log('should trigger here')
-        this.animationItem.goToAndPlay(0, true);
-      }
+      this.showAnimation = true;
 
       //also trigger the team scan request loop
       this.loopCheckTeamScan();
@@ -408,12 +417,22 @@ export class FormWizardContainer {
     this.previousLabelTarget = targetElemId;
   }
 
-  submitScanTeamForm(teamIndex: number = this.currentTeamIndex) {
+  preSubmitScanTeamForm(teamIndex: number = this.currentTeamIndex) {
+    console.log("this.scanTeamForm.valid", this.scanTeamForm.valid)
+    this.scanTeamForm.controls['scanned'].setValue(true);
+    this.scanTeamForm.controls['scanned'].updateValueAndValidity();
+    console.log("this.scanTeamForm.valid", this.scanTeamForm.valid)
+    this.updateTeamScan(teamIndex);
+    this.animationItem.stop();
+    this.toggleCheckedModal();
+  }
+
+  /**
+   * this function is not required, because the form has no button with cdkStepperNext
+   * instead it is the checkedModal btn that will trigger the next step
+   */
+  submitScanTeamForm() {
     if (this.scanTeamForm.valid) {
-      this.animationItem.stop();
-      this.updateTeamScan(teamIndex);
-      this.toggleCheckedModal();
-      this.scanTeamForm.reset();
     }
   }
 
@@ -429,21 +448,20 @@ export class FormWizardContainer {
   };
 
   animationCreated(animationItem: AnimationItem) {
-    console.log("animation created")
     this.animationItem = animationItem;
     this.animationItem.setSpeed(1.5);
+    this.animationItem.play();
   }
 
   loopCheckTeamScan() {
-    let loopRequest = setInterval(() => {
+    this.loopRequest = setInterval(() => {
       this.reservationService.detectTeamScan().subscribe((res: any) => {
         console.log("checking scan", res);
         if (res.tag) {
           this.currentTag = res.tag;
-          this.scanTeamForm.controls['scanned'].setValue(true);
-          this.scanTeamForm.controls['scanned'].updateValueAndValidity();
-          this.submitScanTeamForm();
-          clearInterval(loopRequest);
+
+          this.preSubmitScanTeamForm();
+          clearInterval(this.loopRequest);
         }
       })
     }, 1500)
@@ -526,6 +544,6 @@ export class FormWizard extends CdkStepper {
 
   shouldNextBtnBeDisabled() {
     let currentForm = document.querySelector("form") as HTMLFormElement;
-    return !currentForm?.checkValidity();
+    return !currentForm?.checkValidity() || (currentForm.dataset['name'] === "scanTeamForm");
   }
 }
