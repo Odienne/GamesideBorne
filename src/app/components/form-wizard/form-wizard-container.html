@@ -280,13 +280,7 @@
               />
             </div>
 
-            <input type="text" hidden formControlName="scanned">
-          </div>
-
-          <div class="validation-container">
-            <button class="valid-btn" (click)="submitScanTeamForm(i)">
-              {{ "valid-btn" | translate }}
-            </button>
+            <input type="checkbox" required hidden formControlName="scanned">
           </div>
         </form>
 

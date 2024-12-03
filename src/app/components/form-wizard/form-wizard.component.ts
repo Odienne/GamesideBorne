@@ -66,7 +66,7 @@ export class FormWizardContainer {
     });
 
     this.scanTeamForm = this.fb.group({
-      scanned: [false]
+      scanned: [false, [Validators.requiredTrue]]
     })
 
     this.playerInfosForm = this.fb.group({});
@@ -381,8 +381,11 @@ export class FormWizardContainer {
         this.teams[index].players[i].gender = this.getPlayerInfosFormValue('genderplayer', playerIndex);
       }
 
+      //start the animation on next step
+      console.log(this.animationItem);
       if (this.animationItem) {
-        this.animationItem.play();
+        console.log('should trigger here')
+        this.animationItem.goToAndPlay(0, true);
       }
 
       //also trigger the team scan request loop
@@ -410,6 +413,7 @@ export class FormWizardContainer {
       this.animationItem.stop();
       this.updateTeamScan(teamIndex);
       this.toggleCheckedModal();
+      this.scanTeamForm.reset();
     }
   }
 
@@ -425,6 +429,7 @@ export class FormWizardContainer {
   };
 
   animationCreated(animationItem: AnimationItem) {
+    console.log("animation created")
     this.animationItem = animationItem;
     this.animationItem.setSpeed(1.5);
   }
@@ -435,6 +440,8 @@ export class FormWizardContainer {
         console.log("checking scan", res);
         if (res.tag) {
           this.currentTag = res.tag;
+          this.scanTeamForm.controls['scanned'].setValue(true);
+          this.scanTeamForm.controls['scanned'].updateValueAndValidity();
           this.submitScanTeamForm();
           clearInterval(loopRequest);
         }
