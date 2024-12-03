@@ -44,6 +44,7 @@ export class FormWizardContainer {
   intervalVelocityInitialValue = 500
   intervalVelocity: number = this.intervalVelocityInitialValue;
   intervalVelocityCap = 200;
+  currentTag: any = null;
 
   constructor(private fb: FormBuilder, private cdRef: ChangeDetectorRef, private translate: TranslateService, private reservationService: ReservationService) {
   }
@@ -189,9 +190,8 @@ export class FormWizardContainer {
    * submit first form indicating the number of teams (and eventually the groupName)
    * Then if the form is valid, it populates an array of teams used to iterate in template
    */
-  submitForm() {
+  async submitForm() {
     if (this.form.valid) {
-
       //necessary because array is init with an empty object [{}
       if (Object.keys(this.teams[0]).length === 0) {
         this.teams.splice(0, 1);
@@ -278,7 +278,8 @@ export class FormWizardContainer {
 
 
   returnToStart() {
-    window.location.href = "";
+    let deviceName = localStorage.getItem("deviceName");
+    window.location.href = `${deviceName}`;
   }
 
   /**
@@ -287,20 +288,22 @@ export class FormWizardContainer {
   async toggleCheckedModal() {
     this.checkedModalVisibility = !this.checkedModalVisibility; //toggle modal
 
-
     //We need to prevent user from closing the last modal
     // it acts as a confirmation and sends data before returning to home screen
     //only triggers once, we do not want to resend data
     if (this.checkedModalVisibility && this.allTeamAreCompleted()) { //meaning the last team is completed
-      let res = await this.sendData();
-      if (res === true) {
-        //close modal after 15 seconds (unless user clicks on it again
-        setTimeout(() => {
+      (await this.sendData()).subscribe({
+        complete: () => {
+          setTimeout(() => {
+            this.returnToStart();
+          }, 12000);
+        },
+        error: err => {
+          alert("Une erreur est survenue sur cette borne, contactez votre game master pour vous enregistrer");
           this.returnToStart();
-        }, 12000)
-      } else {
-        alert("could not save data")
-      }
+          throw new Error(err);
+        },
+      });
     } else if (!this.checkedModalVisibility && this.allTeamAreCompleted()) { //if user press check or cancel
       this.returnToStart();
     }
@@ -315,9 +318,11 @@ export class FormWizardContainer {
    * When all teams are completed, data is sent to backend to create teams, groups, etc.
    */
   async sendData() {
-    //this.reservationService.createTeams({});
-    //then, returns to home screen
-    return true;
+    let data = {
+      groupName: this.form.value.groupName,
+      teams: this.teams,
+    }
+    return this.reservationService.createTeams(data);
   }
 
   resetForms() {
@@ -379,6 +384,9 @@ export class FormWizardContainer {
       if (this.animationItem) {
         this.animationItem.play();
       }
+
+      //also trigger the team scan request loop
+      this.loopCheckTeamScan();
     }
   }
 
@@ -397,16 +405,17 @@ export class FormWizardContainer {
     this.previousLabelTarget = targetElemId;
   }
 
-  submitScanTeamForm(teamIndex: number) {
+  submitScanTeamForm(teamIndex: number = this.currentTeamIndex) {
     if (this.scanTeamForm.valid) {
-      this.toggleCheckedModal();
       this.animationItem.stop();
       this.updateTeamScan(teamIndex);
+      this.toggleCheckedModal();
     }
   }
 
   updateTeamScan(teamIndex: number) {
     this.teams[teamIndex].hasScanned = true;
+    this.teams[teamIndex].tag = this.currentTag;
   }
 
   options: AnimationOptions = {
@@ -416,8 +425,21 @@ export class FormWizardContainer {
   };
 
   animationCreated(animationItem: AnimationItem) {
-      this.animationItem = animationItem;
-      this.animationItem.setSpeed(1.5);
+    this.animationItem = animationItem;
+    this.animationItem.setSpeed(1.5);
+  }
+
+  loopCheckTeamScan() {
+    let loopRequest = setInterval(() => {
+      this.reservationService.detectTeamScan().subscribe((res: any) => {
+        console.log("checking scan", res);
+        if (res.tag) {
+          this.currentTag = res.tag;
+          this.submitScanTeamForm();
+          clearInterval(loopRequest);
+        }
+      })
+    }, 1500)
   }
 }
 

@@ -11,6 +11,9 @@ export const routes: Routes = [
     path: "form-wizard", component: FormWizardContainer
   },
   {
+    path: ":device", component: HomeComponent
+  },
+  {
     path: "**", redirectTo: "", pathMatch: "full"
   }
 ];

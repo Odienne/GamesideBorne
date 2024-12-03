@@ -4,6 +4,8 @@ import {AnimationItem} from "lottie-web";
 import {NgIf, NgOptimizedImage} from "@angular/common";
 import {TranslateModule} from "@ngx-translate/core";
 import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
+import {ActivatedRoute} from "@angular/router";
+import {ReservationService} from "../../services/reservation.service";
 
 @Component({
   selector: 'app-home',
@@ -31,11 +33,27 @@ export class HomeComponent {
   currentBackgroundIndex: number = 0;
   currentBackgroundImage: string = this.backgrounds[this.currentBackgroundIndex];
 
+
+  constructor(private activatedRoute: ActivatedRoute, private reservationService: ReservationService) {
+  }
+
   ngOnInit() {
+    const deviceName = this.activatedRoute.snapshot.paramMap.get('device') ?? localStorage.getItem('deviceName');
+
+    if (!deviceName) {
+      alert("No device detected, can't register on this machine. Please head to your game master for help");
+      window.location.href = '';
+    }
+    else {
+      console.log(deviceName, "device stored");
+      localStorage.setItem("deviceName", deviceName);
+    }
+
     setInterval(() => {
       this.currentBackgroundImage = this.backgrounds[this.getNextBackgroundIndex()];
     }, 10000);
   }
+
   getNextBackgroundIndex() {
     this.currentBackgroundIndex = (this.currentBackgroundIndex + 1) % this.backgrounds.length;
     return this.currentBackgroundIndex;
