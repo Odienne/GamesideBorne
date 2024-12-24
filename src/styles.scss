@@ -51,49 +51,49 @@ html, body {
 
 @font-face {
   font-family: 'GothamNarrow';
-  src: url('/assets/fonts/GothamNarrow-Medium.otf') format('truetype');
+  src: url('../public/assets/fonts/GothamNarrow-Medium.otf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'GothamNarrow';
-  src: url('/assets/fonts/GothamNarrow-Black.otf') format('truetype');
+  src: url('../public/assets/fonts/GothamNarrow-Black.otf') format('truetype');
   font-weight: 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'GothamNarrow';
-  src: url('/assets/fonts/GothamNarrow-Bold.otf') format('truetype');
+  src: url('../public/assets/fonts/GothamNarrow-Bold.otf') format('truetype');
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'GothamNarrow';
-  src: url('/assets/fonts/GothamNarrow-BookItalic.otf') format('truetype');
+  src: url('../public/assets/fonts/GothamNarrow-BookItalic.otf') format('truetype');
   font-weight: 300;
   font-style: italic;
 }
 
 @font-face {
   font-family: 'GothamNarrow';
-  src: url('/assets/fonts/GothamNarrow-Book.otf') format('truetype');
+  src: url('../public/assets/fonts/GothamNarrow-Book.otf') format('truetype');
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'LeonSans';
-  src: url('/assets/fonts/LeoSansBold.otf') format('truetype');
+  src: url('../public/assets/fonts/LeoSansBold.otf') format('truetype');
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'EdoSZ';
-  src: url('/assets/fonts/edosz.ttf') format('truetype');
+  src: url('../public/assets/fonts/edosz.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -337,7 +337,7 @@ html, body {
       }
 
       &.with-bg {
-        background: url("/assets/images/bg-traits.png");
+        background: url("../public/assets/images/bg-traits.png");
         background-repeat: no-repeat;
         background-position: center;
         background-size: cover;
@@ -411,7 +411,7 @@ html, body {
 
 .modal-text {
   &.with-bg {
-    background: url("/assets/images/bg-traits.png");
+    background: url("../public/assets/images/bg-traits.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

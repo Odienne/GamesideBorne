@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {NgForOf, NgIf} from "@angular/common";
+import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {CdkStepperNext} from "@angular/cdk/stepper";
 
@@ -9,8 +9,7 @@ import {CdkStepperNext} from "@angular/cdk/stepper";
   imports: [
     NgForOf,
     TranslateModule,
-    CdkStepperNext,
-    NgIf
+    NgOptimizedImage,
   ],
   templateUrl: './lang-selection.component.html',
   styleUrl: './lang-selection.component.scss'

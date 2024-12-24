@@ -14,6 +14,6 @@ export const routes: Routes = [
     path: ":device", component: HomeComponent
   },
   {
-    path: "**", redirectTo: "", pathMatch: "full"
+    path: "**", redirectTo: "/", pathMatch: "full"
   }
 ];

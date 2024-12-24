@@ -25,16 +25,16 @@ export class HomeComponent {
   animationClass = "";
 
   backgrounds: string[] = [
-    "/assets/images/bgs/1.png",
-    "/assets/images/bgs/2.png",
-    "/assets/images/bgs/3.png",
-    "/assets/images/bgs/4.png",
+    "./assets/images/bgs/1.png",
+    "./assets/images/bgs/2.png",
+    "./assets/images/bgs/3.png",
+    "./assets/images/bgs/4.png",
   ];
   currentBackgroundIndex: number = 0;
   currentBackgroundImage: string = this.backgrounds[this.currentBackgroundIndex];
 
 
-  constructor(private activatedRoute: ActivatedRoute, private reservationService: ReservationService) {
+  constructor(private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit() {
@@ -45,7 +45,7 @@ export class HomeComponent {
       window.location.href = '';
     }
     else {
-      console.log(deviceName, "device stored");
+      // console.log(deviceName, "device stored");
       localStorage.setItem("deviceName", deviceName);
     }
 
@@ -66,7 +66,7 @@ export class HomeComponent {
       this.play();
 
       setTimeout(() => {
-        window.location.href = '/form-wizard';
+        window.location.href = 'form-wizard';
       }, 2000)
     }, 200)
   }
@@ -75,7 +75,7 @@ export class HomeComponent {
 
 
   options: AnimationOptions = {
-    path: '/assets/animations/heartbeat.json',
+    path: './assets/animations/heartbeat.json',
     loop: false,
     autoplay: false
   };
