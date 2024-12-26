@@ -26,4 +26,8 @@ export class ReservationService {
   createTeams(data: any) {
     return this.http.post(this.BACKEND_SERVER_URL, data);
   }
+
+  getMaxTeams() {
+    return this.http.get(this.BACKEND_SERVER_URL + "?getMaxTeams=1");
+  }
 }
