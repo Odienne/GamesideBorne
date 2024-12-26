@@ -25,7 +25,7 @@ export class FormWizardContainer {
   playerInfosForm!: FormGroup; //third form to retrieve player infos (gender,age)
   scanTeamForm!: FormGroup; //hidden form to save and retrieve whether the team has scanned its badge
   nbTeams = 0;
-  maxTeams = 99; //updated by api call in ngOnInit
+  maxTeams = 10; //updated by api call in ngOnInit
   isKeyboardOpen: boolean = false;
   animationItem!: AnimationItem; //lottie scan animation item
   showAnimation: boolean = false; //used in template to display animation
@@ -74,7 +74,9 @@ export class FormWizardContainer {
     this.playerInfosForm = this.fb.group({});
 
     this.reservationService.getMaxTeams().subscribe((res: any) => {
-      this.maxTeams = res.maxTeams;
+      if (res.maxTeams) {
+        this.maxTeams = res.maxTeams;
+      }
     });
   }
 
