@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
+import {NgForOf, NgOptimizedImage} from "@angular/common";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import {CdkStepperNext} from "@angular/cdk/stepper";
+import * as config from "./../../../../config.json";
 
 @Component({
   selector: 'app-lang-selection',
@@ -15,11 +15,7 @@ import {CdkStepperNext} from "@angular/cdk/stepper";
   styleUrl: './lang-selection.component.scss'
 })
 export class LangSelectionComponent {
-  locales = [
-    "fr",
-    "en",
-    "es",
-  ];
+  locales = config.locales;
 
   @Input() onSubmit!: any;
 

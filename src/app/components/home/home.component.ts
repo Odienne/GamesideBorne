@@ -5,7 +5,7 @@ import {NgIf, NgOptimizedImage} from "@angular/common";
 import {TranslateModule} from "@ngx-translate/core";
 import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
 import {ActivatedRoute} from "@angular/router";
-import {ReservationService} from "../../services/reservation.service";
+import * as config from "./../../../../config.json";
 
 @Component({
   selector: 'app-home',
@@ -24,12 +24,7 @@ export class HomeComponent {
   showAnimation = false;
   animationClass = "";
 
-  backgrounds: string[] = [
-    "./assets/images/bgs/1.png",
-    "./assets/images/bgs/2.png",
-    "./assets/images/bgs/3.png",
-    "./assets/images/bgs/4.png",
-  ];
+  backgrounds: string[] = config.backgrounds;
   currentBackgroundIndex: number = 0;
   currentBackgroundImage: string = this.backgrounds[this.currentBackgroundIndex];
 
