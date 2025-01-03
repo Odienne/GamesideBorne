@@ -5,7 +5,7 @@ import {NgIf, NgOptimizedImage} from "@angular/common";
 import {TranslateModule} from "@ngx-translate/core";
 import {LangSelectionComponent} from "../lang-selection/lang-selection.component";
 import {ActivatedRoute} from "@angular/router";
-import * as config from "./../../../../config.json";
+import {ConfigService} from "../../services/config.service";
 
 @Component({
   selector: 'app-home',
@@ -24,29 +24,23 @@ export class HomeComponent {
   showAnimation = false;
   animationClass = "";
 
-  backgrounds: string[] = config.backgrounds;
+  defaultBackgrounds: string[] = [
+    "./assets/images/bgs/1.png",
+    "./assets/images/bgs/2.png",
+    "./assets/images/bgs/3.png",
+    "./assets/images/bgs/4.png"
+  ];
+  backgrounds = this.defaultBackgrounds;
   currentBackgroundIndex: number = 0;
   currentBackgroundImage: string = this.backgrounds[this.currentBackgroundIndex];
 
 
-  constructor(private activatedRoute: ActivatedRoute) {
+  constructor(private activatedRoute: ActivatedRoute, private configService: ConfigService) {
   }
 
   ngOnInit() {
-    const deviceName = this.activatedRoute.snapshot.paramMap.get('device') ?? localStorage.getItem('deviceName');
-
-    if (!deviceName) {
-      alert("No device detected, can't register on this machine. Please head to your game master for help");
-      window.location.href = '';
-    }
-    else {
-      // console.log(deviceName, "device stored");
-      localStorage.setItem("deviceName", deviceName);
-    }
-
-    setInterval(() => {
-      this.currentBackgroundImage = this.backgrounds[this.getNextBackgroundIndex()];
-    }, 10000);
+    this.retrieveDeviceName();
+    this.retrieveBackgroundConfig();
   }
 
   getNextBackgroundIndex() {
@@ -85,15 +79,28 @@ export class HomeComponent {
     }
   }
 
-  pause(): void {
-    if (this.animationItem) {
-      this.animationItem.pause();
+  private retrieveDeviceName() {
+    const deviceName = this.activatedRoute.snapshot.paramMap.get('device') ?? localStorage.getItem('deviceName');
+
+    if (!deviceName) {
+      alert("No device detected, can't register on this machine. Please head to your game master for help");
+      window.location.href = '';
+    } else {
+      localStorage.setItem("deviceName", deviceName);
     }
   }
 
-  stop(): void {
-    if (this.animationItem) {
-      this.animationItem.stop();
-    }
+  private intervalBackground() {
+    setInterval(() => {
+      this.currentBackgroundImage = this.backgrounds[this.getNextBackgroundIndex()];
+    }, 10000);
+  }
+
+  private retrieveBackgroundConfig() {
+    this.configService.getConfig().subscribe((config: any) => {
+      this.backgrounds = config.backgrounds ?? this.defaultBackgrounds;
+      this.currentBackgroundImage = this.backgrounds[this.currentBackgroundIndex];
+      this.intervalBackground();
+    });
   }
 }
