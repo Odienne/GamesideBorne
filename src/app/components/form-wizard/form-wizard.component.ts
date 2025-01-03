@@ -257,8 +257,8 @@ export class FormWizardContainer {
           //classic add
           this.teams[index].players.push({age: null, gender: null}); //to iterate on it in template
 
-          this.playerInfosForm.addControl('ageplayer' + (i + 1), this.fb.control(null));
-          this.playerInfosForm.addControl('genderplayer' + (i + 1), this.fb.control(null));
+          this.playerInfosForm.addControl('ageplayer' + (parseInt(i) + 1), this.fb.control(null));
+          this.playerInfosForm.addControl('genderplayer' + (parseInt(i) + 1), this.fb.control(null));
         }
       } else if (newValue < oldValue) { //we want fewer players
         for (let i = newValue; i < oldValue; i++) {
@@ -431,15 +431,6 @@ export class FormWizardContainer {
     this.updateTeamScan(teamIndex);
     this.animationItem.stop();
     this.toggleCheckedModal();
-  }
-
-  /**
-   * this function is not required, because the form has no button with cdkStepperNext
-   * instead it is the checkedModal btn that will trigger the next step
-   */
-  submitScanTeamForm() {
-    if (this.scanTeamForm.valid) {
-    }
   }
 
   updateTeamScan(teamIndex: number) {
