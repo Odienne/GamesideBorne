@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {NgForOf, NgOptimizedImage} from "@angular/common";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
-import * as config from "./../../../../config.json";
+import {ConfigService} from "../../services/config.service";
 
 @Component({
   selector: 'app-lang-selection',
@@ -15,13 +15,23 @@ import * as config from "./../../../../config.json";
   styleUrl: './lang-selection.component.scss'
 })
 export class LangSelectionComponent {
-  locales = config.locales;
 
   @Input() onSubmit!: any;
 
   selected = "";
+  defaultLocales: string[] = [
+    "fr",
+    "en",
+    "es"
+  ];
+  locales = this.defaultLocales;
 
-  constructor(private translateService: TranslateService) {
+
+  constructor(private translateService: TranslateService, private configService: ConfigService) {
+  }
+
+  ngOnInit() {
+    this.retrieveLocalesConfig();
   }
 
   selectLocale(locale: string) {
@@ -29,5 +39,11 @@ export class LangSelectionComponent {
     localStorage.setItem("lang", locale);
     this.translateService.use(locale);
     this.translateService.setDefaultLang(locale);
+  }
+
+  private retrieveLocalesConfig() {
+    this.configService.getConfig().subscribe((config: any) => {
+      this.locales = config.locales ?? this.defaultLocales;
+    })
   }
 }

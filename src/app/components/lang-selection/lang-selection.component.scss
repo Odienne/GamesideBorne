@@ -4,11 +4,13 @@
   align-items: center;
   flex-direction: column;
   height: calc(80vh - 120px);
+  max-width: 70vw;
+  margin: auto;
 }
 
 .lang-selector-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   flex-direction: row;
   flex-wrap: wrap;
