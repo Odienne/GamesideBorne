@@ -39,7 +39,6 @@ export class HomeComponent {
   }
 
   ngOnInit() {
-    this.retrieveDeviceName();
     this.retrieveBackgroundConfig();
   }
 
@@ -76,17 +75,6 @@ export class HomeComponent {
   play(): void {
     if (this.animationItem) {
       this.animationItem.play();
-    }
-  }
-
-  private retrieveDeviceName() {
-    const deviceName = this.activatedRoute.snapshot.paramMap.get('device') ?? localStorage.getItem('deviceName');
-
-    if (!deviceName) {
-      alert("No device detected, can't register on this machine. Please head to your game master for help");
-      window.location.href = '';
-    } else {
-      localStorage.setItem("deviceName", deviceName);
     }
   }
 

@@ -5,7 +5,7 @@ import {HttpClient} from "@angular/common/http";
   providedIn: 'root'
 })
 export class ConfigService {
-  CONFIG_PATH = "./assets/config.json";
+  CONFIG_PATH = "./config.json";
 
   constructor(private http: HttpClient) {
   }

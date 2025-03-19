@@ -16,4 +16,15 @@
 <body oncontextmenu="return false;">
   <app-root></app-root>
 </body>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    //call by qt app on rfid event
+    function OnRfid(rfid) {
+      const event = new CustomEvent('rfid', {detail: rfid});
+      document.dispatchEvent(event);
+    }
+  });
+</script>
 </html>

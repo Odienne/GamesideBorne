@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {NgForOf, NgOptimizedImage} from "@angular/common";
 import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {ConfigService} from "../../services/config.service";
+import {InfiniteScrollDirective} from "ngx-infinite-scroll";
 
 @Component({
   selector: 'app-lang-selection',
@@ -10,6 +11,7 @@ import {ConfigService} from "../../services/config.service";
     NgForOf,
     TranslateModule,
     NgOptimizedImage,
+    InfiniteScrollDirective
   ],
   templateUrl: './lang-selection.component.html',
   styleUrl: './lang-selection.component.scss'
@@ -26,6 +28,7 @@ export class LangSelectionComponent {
   ];
   locales = this.defaultLocales;
 
+  array = [...this.locales];
 
   constructor(private translateService: TranslateService, private configService: ConfigService) {
   }
@@ -46,4 +49,5 @@ export class LangSelectionComponent {
       this.locales = config.locales ?? this.defaultLocales;
     })
   }
+
 }

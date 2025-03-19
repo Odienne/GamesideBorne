@@ -74,8 +74,9 @@ export class FormWizardContainer {
     this.playerInfosForm = this.fb.group({});
 
     this.reservationService.getMaxTeams().subscribe((res: any) => {
-      if (res.maxTeams) {
-        this.maxTeams = res.maxTeams;
+      const data = JSON.parse(res);
+      if (data.maxTeams) {
+        this.maxTeams = data.maxTeams;
       }
     });
   }
@@ -186,7 +187,7 @@ export class FormWizardContainer {
   updateGroupNameValidators() {
     if (this.nbTeams > 1) {
       this.form.controls['groupName'].setValidators([
-        // Validators.required,
+        Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50)
       ]);
@@ -312,8 +313,8 @@ export class FormWizardContainer {
           }, 12000);
         },
         error: err => {
-          alert("Une erreur est survenue sur cette borne, contactez votre game master pour vous enregistrer");
-          this.returnToStart();
+          alert(err.message);
+          // this.returnToStart();
           throw new Error(err);
         },
       });
@@ -332,6 +333,7 @@ export class FormWizardContainer {
    */
   async sendData() {
     let data = {
+      locale:  localStorage.getItem("lang"),
       groupName: this.form.value.groupName,
       teams: this.teams,
     }
@@ -451,17 +453,14 @@ export class FormWizardContainer {
   }
 
   loopCheckTeamScan() {
-    this.loopRequest = setInterval(() => {
-      this.reservationService.detectTeamScan().subscribe((res: any) => {
-        console.log("checking scan", res);
-        if (res.tag) {
-          this.currentTag = res.tag;
 
-          this.preSubmitScanTeamForm();
-          clearInterval(this.loopRequest);
-        }
-      })
-    }, 1500)
+    const rfidHandler = (e: any) => {
+      document.removeEventListener('rfid', rfidHandler);
+      this.currentTag = e.detail;
+      this.preSubmitScanTeamForm();
+    }
+    //listening for scan
+    document.addEventListener('rfid', rfidHandler);
   }
 }
 

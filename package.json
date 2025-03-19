@@ -24,6 +24,7 @@
     "@ngx-translate/http-loader": "^8.0.0",
     "angular-ng-stepper": "^2.0.0",
     "lottie-web": "^5.12.2",
+    "ngx-infinite-scroll": "^18.0.0",
     "ngx-lottie": "^12.0.0",
     "ngx-touch-keyboard": "^3.3.0",
     "rxjs": "~7.8.0",
