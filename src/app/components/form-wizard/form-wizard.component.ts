@@ -74,7 +74,7 @@ export class FormWizardContainer {
     this.playerInfosForm = this.fb.group({});
 
     this.reservationService.getMaxTeams().subscribe((res: any) => {
-      const data = JSON.parse(res);
+      const data = res;
       if (data.maxTeams) {
         this.maxTeams = data.maxTeams;
       }
@@ -313,6 +313,7 @@ export class FormWizardContainer {
           }, 12000);
         },
         error: err => {
+          console.log(err)
           alert(err.message);
           // this.returnToStart();
           throw new Error(err);
